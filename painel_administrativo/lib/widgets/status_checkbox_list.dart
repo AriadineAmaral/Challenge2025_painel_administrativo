@@ -4,14 +4,16 @@ import 'package:painel_administrativo/widgets/button.dart';
 
 class StatusCheckboxList extends StatelessWidget {
   final List<bool> checks;
-  final List<String> statusMissao;
+  final List<String> status;
   final void Function(int index, bool value) onChanged;
+  final String titulo;
 
   const StatusCheckboxList({
     super.key,
     required this.checks,
-    required this.statusMissao,
+    required this.status,
     required this.onChanged,
+    required this.titulo,
   });
 
   @override
@@ -22,13 +24,12 @@ class StatusCheckboxList extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: Text(
-            "Lista de missões",
+          child: Text(titulo,
             style: AppStyles.kufam(25, AppStyles.black, AppStyles.semiBold),
           ),
         ),
 
-        ...List.generate(statusMissao.length, (index) {
+        ...List.generate(status.length, (index) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -45,7 +46,7 @@ class StatusCheckboxList extends StatelessWidget {
                 ),
               ),
               Text(
-                statusMissao[index],
+                status[index],
                 style: AppStyles.kufam(16, AppStyles.black, AppStyles.regular),
               ),
               const SizedBox(width: 16),

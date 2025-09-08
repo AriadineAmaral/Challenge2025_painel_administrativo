@@ -19,7 +19,7 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = AppStyles();
+
 
     return Center(
       child: SizedBox(

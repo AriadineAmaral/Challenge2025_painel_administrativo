@@ -17,7 +17,7 @@ class EngagementChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppStyles appStyles = AppStyles();
+
     return SizedBox(
       width: 100, // tamanho circulo
       height: 100, // tananho circulo

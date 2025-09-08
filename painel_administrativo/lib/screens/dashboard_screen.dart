@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/widgets/bar_chart.dart';
 import 'package:painel_administrativo/widgets/engagement_chart.dart';
+import 'package:painel_administrativo/widgets/header.dart';
 import 'package:painel_administrativo/widgets/reusable_card.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/horizontal_missions_chart.dart';
@@ -45,43 +46,36 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final AppStyles appStyles = AppStyles();
-
+    double larguraTela = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppStyles.white,
-      appBar: AppBar(
-        backgroundColor: AppStyles.blue,
-        elevation: 0,
-        title: Text(
-          'EuroPro',
-          style: AppStyles.kronaOne(20, AppStyles.white, AppStyles.bold),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Text(
-              'Sair',
-              style: AppStyles.kronaOne(16, AppStyles.white, AppStyles.bold),
-            ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(100), // Espaçamento geral da tela
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  'Dashboard de Engajamento',
-                  style: AppStyles.kronaOne(24, Colors.black, AppStyles.bold),
+      appBar: const Header(),
+      body: SingleChildScrollView(
+        child: Center(
+          child: SizedBox(
+            width: larguraTela * 0.8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 50, bottom: 30),
+                  child: Text(
+                    "Dashboard de Engajamento",
+                    style: AppStyles.kufam(
+                      30,
+                      AppStyles.black,
+                      AppStyles.semiBold,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              _buildEngagementSection(appStyles),
-              const SizedBox(height: 40),
-              _buildProjectsSection(appStyles),
-            ],
+                const SizedBox(height: 40),
+                _buildEngagementSection(appStyles),
+                const SizedBox(height: 40),
+                _buildProjectsSection(appStyles),
+                SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),
@@ -94,7 +88,6 @@ class _DashboardPageState extends State<DashboardPage> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12.0),
@@ -197,7 +190,7 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
 
-            // Segundo card 
+            // Segundo card
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -382,9 +375,8 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
 
-           
             SizedBox(
               height: 350,
               width: 1200, // tamanho do grafico missoes

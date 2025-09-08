@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/pages/administrar_missoes.dart';
+import 'package:painel_administrativo/screens/analyze_projects_screen.dart';
+import 'package:painel_administrativo/screens/dashboard_screen.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/button.dart';
 import 'package:painel_administrativo/widgets/header.dart';
@@ -59,14 +61,24 @@ class _HomeState extends State<Home> {
                     Button(text: "Analisar projetos", backgroundColor:  AppStyles.blue, textStyle: AppStyles.kufam(24, AppStyles.white, AppStyles.semiBold),
                     width: larguraTela * 0.3,
                     height: 100,
-                    onPressed: () {}),
+                    onPressed: () {
+                       Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AnalyzeProjects()),
+                        );
+                    }),
 
                      SizedBox(height: 24),
 
                     Button(text: "Dashboard de Engajamento", backgroundColor:  AppStyles.blue, textStyle: AppStyles.kufam(24, AppStyles.white, AppStyles.semiBold),
                     width: larguraTela * 0.3,
                     height: 100,
-                    onPressed: () {}),
+                    onPressed: () {
+                       Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DashboardPage()),
+                        );
+                    }),
                   ],
                 ),
               ),

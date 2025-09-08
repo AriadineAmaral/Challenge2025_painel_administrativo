@@ -68,7 +68,8 @@ class _AdministrarMissoesState extends State<AdministrarMissoes> {
                         children: [
                           StatusCheckboxList(
                             checks: checks,
-                            statusMissao: statusMissao,
+                            titulo: "Administrar Missões",
+                            status: statusMissao,
                             onChanged: (index, value) {
                               setState(() {
                                 checks[index] = value;
