@@ -8,6 +8,8 @@ class Button extends StatelessWidget {
   final TextStyle textStyle;
   final double? width;
   final double? height;
+    final double? elevation;
+
 
   const Button({
     super.key,
@@ -18,6 +20,7 @@ class Button extends StatelessWidget {
     this.borderRadius = 5.0,
     this.width,
     this.height,
+     this.elevation = 4.0,
   });
 
   @override
@@ -33,6 +36,7 @@ class Button extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
+          elevation: elevation, // <--- Aplica a sombra aqui
         ),
         child: Text(text, style: textStyle),
       ),
