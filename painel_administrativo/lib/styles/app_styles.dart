@@ -5,6 +5,7 @@ class AppStyles {
   static const Color blue = Color(0xFF00358E);
   static const Color yellow = Color(0xFFFFF200);
   static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
   static const Color grey = Color(0xFFECECEC);
   static const Color grey2 = Color(0xFFD9D9D9);
   static const Color textGrey = Color(0xFF665B5B);
@@ -14,7 +15,7 @@ class AppStyles {
   static const FontWeight semiBold = FontWeight.w600;
   static const FontWeight bold = FontWeight.w700;
 
-  TextStyle akatab(double size, Color color, FontWeight fontWeight) {
+ static TextStyle akatab(double size, Color color, FontWeight fontWeight) {
     return GoogleFonts.akatab(
       fontSize: size,
       fontWeight: fontWeight, 
@@ -22,7 +23,7 @@ class AppStyles {
     );
   }
 
-  TextStyle kronaOne(double size, Color color, FontWeight fontWeight) {
+ static TextStyle kronaOne(double size, Color color, FontWeight fontWeight) {
     return GoogleFonts.kronaOne(
       fontSize: size,
       fontWeight: fontWeight,
@@ -30,7 +31,7 @@ class AppStyles {
     );
   }
 
-  TextStyle kufam(double size, Color color, FontWeight fontWeight) {
+ static TextStyle kufam(double size, Color color, FontWeight fontWeight) {
     return GoogleFonts.kufam(
       fontSize: size,
       fontWeight: fontWeight,
