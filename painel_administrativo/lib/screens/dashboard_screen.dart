@@ -58,6 +58,7 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                
                 Padding(
                   padding: EdgeInsets.only(top: 50, bottom: 30),
                   child: Text(
@@ -71,9 +72,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
                 const SizedBox(height: 40),
                 _buildEngagementSection(appStyles),
-                const SizedBox(height: 40),
+                const SizedBox(height: 10),
                 _buildProjectsSection(appStyles),
-                SizedBox(height: 30),
+                SizedBox(height: 10),
+                
               ],
             ),
           ),
@@ -83,19 +85,37 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildEngagementSection(AppStyles appStyles) {
-    return Column(
-      children: [
+     return Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const SizedBox(height: 50),
+    DropdownButton<String>(
+      value: _colaboradorSelecionado,
+      hint: const Text("Colaborador"),
+      items: _colaboradores.map((colab) {
+        return DropdownMenuItem(
+          value: colab,
+          child: Text(colab),
+          
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() => _colaboradorSelecionado = value);
+      },
+    ),
+    const SizedBox(height: 20),
+        
+
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Primeiro card - Engajamento por colaborador
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12.0),
+                padding: const EdgeInsets.only(right: 12.0, top: 80.0),
                 child: ReusableCard(
                   child: Padding(
-                    padding: const EdgeInsets.all(
-                      16.0,
-                    ), // espaçamento interno do card
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         Text(
@@ -120,43 +140,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                     textColor: AppStyles.blue,
                                   ),
                                   const SizedBox(height: 10),
-                                  DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _colaboradorSelecionado,
-                                      hint: Text(
-                                        'Colaborador',
-                                        style: AppStyles.kufam(
-                                          14,
-                                          AppStyles.textGrey,
-                                          AppStyles.regular,
-                                        ),
-                                      ),
-                                      icon: const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: AppStyles.textGrey,
-                                      ),
-                                      style: AppStyles.kufam(
-                                        14,
-                                        AppStyles.textGrey,
-                                        AppStyles.regular,
-                                      ),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _colaboradorSelecionado = newValue;
-                                        });
-                                      },
-                                      items: _colaboradores
-                                          .map<DropdownMenuItem<String>>((
-                                            String value,
-                                          ) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          })
-                                          .toList(),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -164,9 +147,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Expanded(
                               child: Container(
                                 height: 150,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 1,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 1),
                                 child: BarChartComponent(
                                   data: [5, 6, 8, 7, 9, 10, 8, 7, 9, 8, 7, 9],
                                   color: AppStyles.blue,
@@ -190,13 +171,14 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
 
+
             // Segundo card
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+               padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 80.0),
                 child: ReusableCard(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         Text(
@@ -209,41 +191,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: _colaboradorSelecionado,
-                            hint: Text(
-                              'Colaborador',
-                              style: AppStyles.kufam(
-                                14,
-                                AppStyles.textGrey,
-                                AppStyles.regular,
-                              ),
-                            ),
-                            icon: const Icon(
-                              Icons.arrow_drop_down,
-                              color: AppStyles.textGrey,
-                            ),
-                            style: AppStyles.kufam(
-                              14,
-                              AppStyles.textGrey,
-                              AppStyles.regular,
-                            ),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _colaboradorSelecionado = newValue;
-                              });
-                            },
-                            items: _colaboradores.map<DropdownMenuItem<String>>(
-                              (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              },
-                            ).toList(),
-                          ),
-                        ),
+                        
                         const SizedBox(height: 10),
                         Container(
                           height: 150,
@@ -362,16 +310,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   },
                 ),
                 const SizedBox(width: 15),
-                DropdownButton<String>(
-                  value: _colaboradorSelecionado,
-                  hint: const Text("Colaborador"),
-                  items: _colaboradores.map((colab) {
-                    return DropdownMenuItem(value: colab, child: Text(colab));
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() => _colaboradorSelecionado = value);
-                  },
-                ),
+               
               ],
             ),
 
