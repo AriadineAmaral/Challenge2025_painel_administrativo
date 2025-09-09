@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/models/project.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/card_projetos.dart';
-import 'package:painel_administrativo/widgets/header.dart';
-import 'package:painel_administrativo/widgets/status_checkbox_list.dart';
+import 'package:painel_administrativo/widgets/projects_screen/project_card.dart';
+import 'package:painel_administrativo/widgets/generic/header.dart';
+import 'package:painel_administrativo/widgets/generic/status_checkbox_list.dart';
 
 class AnalyzeProjects extends StatefulWidget {
   const AnalyzeProjects({super.key});
@@ -20,26 +20,7 @@ class _AnalyzeProjectsState extends State<AnalyzeProjects> {
   bool development = true;
   bool finished = false;
 
-  
-
   List<Project> filteredProjects = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   applyFilter();
-  // }
-
-  // void applyFilter() {
-  //   setState(() {
-  //     filteredProjects = allProjects.where((p) {
-  //       if (analysis && p.status == "análise") return true;
-  //       if (development && p.status == "desenvolvimento") return true;
-  //       if (finished && p.status == "finalizado") return true;
-  //       return false;
-  //     }).toList();
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +59,7 @@ class _AnalyzeProjectsState extends State<AnalyzeProjects> {
                   },
                 ),
                 SizedBox(height: 12),
-                CardProjetos(),
+                ProjectCard(),
               ],
             ),
           ),

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:painel_administrativo/models/project.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 
-class CardProjetos extends StatefulWidget {
-  const CardProjetos({super.key});
+class ProjectCard extends StatefulWidget {
+  const ProjectCard({super.key});
 
   @override
-  State<CardProjetos> createState() => _CardProjetosState();
+  State<ProjectCard> createState() => _ProjectCardState();
 }
 
-class _CardProjetosState extends State<CardProjetos> {
+class _ProjectCardState extends State<ProjectCard> {
   List<Project> projects = [
     Project(
       name: "Projeto Kaizen",

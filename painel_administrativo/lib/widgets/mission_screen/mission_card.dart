@@ -1,54 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/data/model/missao.dart';
+import 'package:painel_administrativo/models/mission.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/editar_missao.dart';
+import 'package:painel_administrativo/widgets/mission_screen/edit_mission.dart';
 
-class CardMissoes extends StatefulWidget {
-  const CardMissoes({super.key});
+class MissionCard extends StatefulWidget {
+  const MissionCard({super.key});
 
   @override
-  State<CardMissoes> createState() => _CardMissoesState();
+  State<MissionCard> createState() => _MissionCardState();
 }
 
-class _CardMissoesState extends State<CardMissoes> {
-  List<Missao> missoes = [
-    Missao(
+class _MissionCardState extends State<MissionCard> {
+  List<Mission> missoes = [
+    Mission(
       idMissao: 1,
       titulo: "Participe do fórum de ideias",
       status: "Ativa",
-      dataInicio: Missao.calcularDataInicio(DateTime(2025, 9, 30)),
+      dataInicio: Mission.calcularDataInicio(DateTime(2025, 9, 30)),
       dataVencimento: DateTime(2025, 9, 30),
       pontos: 8,
     ),
-    Missao(
+    Mission(
       idMissao: 2,
       titulo: "Leia o artigo sobre inteligência emocional",
       status: "Programada",
-      dataInicio: Missao.calcularDataInicio(DateTime(2025, 10, 31)),
+      dataInicio: Mission.calcularDataInicio(DateTime(2025, 10, 31)),
       dataVencimento: DateTime(2025, 10, 31),
       pontos: 5,
     ),
-    Missao(
+    Mission(
       idMissao: 3,
       titulo: "Assista ao vídeo sobre trabalho em equipe",
       status: "Encerrada",
-      dataInicio: Missao.calcularDataInicio(DateTime(2025, 8, 31)),
+      dataInicio: Mission.calcularDataInicio(DateTime(2025, 8, 31)),
       dataVencimento: DateTime(2025, 8, 31),
       pontos: 10,
     ),
-    Missao(
+    Mission(
       idMissao: 4,
       titulo: "Complete o quiz sobre valores da empresa",
       status: "Encerrada",
-      dataInicio: Missao.calcularDataInicio(DateTime(2025, 8, 31)),
+      dataInicio: Mission.calcularDataInicio(DateTime(2025, 8, 31)),
       dataVencimento: DateTime(2025, 8, 31),
       pontos: 25,
     ),
-    Missao(
+    Mission(
       idMissao: 5,
       titulo: "Responda à pesquisa de engajamento",
       status: "Encerrada",
-      dataInicio: Missao.calcularDataInicio(DateTime(2025, 7, 31)),
+      dataInicio: Mission.calcularDataInicio(DateTime(2025, 7, 31)),
       dataVencimento: DateTime(2025, 7, 31),
       pontos: 18,
     ),
@@ -155,7 +155,7 @@ class _CardMissoesState extends State<CardMissoes> {
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(width: 10),
-                              EditarMissao(
+                              EditMission(
                                 missao: missao,
                                 formatarData: formatarData,
                               ),

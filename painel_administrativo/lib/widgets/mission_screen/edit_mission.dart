@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/data/model/missao.dart';
+import 'package:painel_administrativo/models/mission.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/calendario.dart';
+import 'package:painel_administrativo/widgets/generic/calendar.dart';
 
-class EditarMissao extends StatelessWidget {
-  final Missao missao;
+class EditMission extends StatelessWidget {
+  final Mission missao;
   final String Function(DateTime) formatarData;
 
-  const EditarMissao({
+  const EditMission({
     super.key,
     required this.missao,
     required this.formatarData,
@@ -147,7 +147,7 @@ class EditarMissao extends StatelessWidget {
                                 TextButton(
                                   onPressed: () async {
                                     final picked =
-                                        await Calendario.selecionarData(
+                                        await Calendar.selecionarData(
                                           context: context,
                                           dataInicial: dataInicio,
                                         );
@@ -182,7 +182,7 @@ class EditarMissao extends StatelessWidget {
                                 TextButton(
                                   onPressed: () async {
                                      final picked =
-                                        await Calendario.selecionarData(
+                                        await Calendar.selecionarData(
                                           context: context,
                                           dataInicial: dataVencimento,
                                         );

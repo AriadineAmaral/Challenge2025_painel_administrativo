@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/pages/home.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/button.dart';
-import 'package:painel_administrativo/widgets/custom_date_field.dart';
-import 'package:painel_administrativo/widgets/custom_text_field%20.dart';
+import 'package:painel_administrativo/widgets/generic/button.dart';
+import 'package:painel_administrativo/widgets/generic/custom_date_field.dart';
+import 'package:painel_administrativo/widgets/generic/custom_text_field%20.dart';
 
-class CadastroMissao extends StatefulWidget {
-  const CadastroMissao({super.key});
+class CreateMission extends StatefulWidget {
+  const CreateMission({super.key});
 
   @override
-  State<CadastroMissao> createState() => _CadastroMissaoState();
+  State<CreateMission> createState() => _CreateMissionState();
 }
 
-class _CadastroMissaoState extends State<CadastroMissao> {
+class _CreateMissionState extends State<CreateMission> {
   final TextEditingController tituloController = TextEditingController();
   final TextEditingController linkController = TextEditingController();
   final TextEditingController pontosController = TextEditingController();
@@ -141,10 +140,10 @@ class _CadastroMissaoState extends State<CadastroMissao> {
                 AppStyles.semiBold,
               ).copyWith(height: 0.5),
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Home()),
-                );
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => HomeScreen()),
+                // );
               },
             ),
           ],

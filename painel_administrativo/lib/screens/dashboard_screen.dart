@@ -1,25 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/widgets/bar_chart.dart';
-import 'package:painel_administrativo/widgets/engagement_chart.dart';
-import 'package:painel_administrativo/widgets/header.dart';
-import 'package:painel_administrativo/widgets/reusable_card.dart';
+import 'package:painel_administrativo/widgets/dashboard_screen/bar_chart.dart';
+import 'package:painel_administrativo/widgets/dashboard_screen/engagement_chart.dart';
+import 'package:painel_administrativo/widgets/generic/header.dart';
+import 'package:painel_administrativo/widgets/dashboard_screen/reusable_card.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/horizontal_missions_chart.dart';
-
-final List<String> _meses = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
-];
+import 'package:painel_administrativo/widgets/dashboard_screen/horizontal_missions_chart.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -58,9 +43,8 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                
                 Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 30),
+                  padding: EdgeInsets.only(top: 50, bottom: 60),
                   child: Text(
                     "Dashboard de Engajamento",
                     style: AppStyles.kufam(
@@ -70,12 +54,33 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Filtrar", style: AppStyles.kufam(18, AppStyles.black, AppStyles.semiBold),),
+                      const SizedBox(width: 10),
+                    SizedBox(
+                      width: larguraTela * 0.2, 
+                      child: DropdownButton<String>(
+                        value: _colaboradorSelecionado,
+                        isExpanded: true,
+                        hint: const Text("Colaborador"),
+                        items: _colaboradores.map((colab) {
+                          return DropdownMenuItem(value: colab, child: Text(colab));
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() => _colaboradorSelecionado = value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 40),
                 _buildEngagementSection(appStyles),
-                const SizedBox(height: 10),
+                const SizedBox(height: 40),
                 _buildProjectsSection(appStyles),
-                SizedBox(height: 10),
-                
+                SizedBox(height: 30),
               ],
             ),
           ),
@@ -85,37 +90,19 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildEngagementSection(AppStyles appStyles) {
-     return Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const SizedBox(height: 50),
-    DropdownButton<String>(
-      value: _colaboradorSelecionado,
-      hint: const Text("Colaborador"),
-      items: _colaboradores.map((colab) {
-        return DropdownMenuItem(
-          value: colab,
-          child: Text(colab),
-          
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() => _colaboradorSelecionado = value);
-      },
-    ),
-    const SizedBox(height: 20),
-        
-
+    return Column(
+      children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Primeiro card - Engajamento por colaborador
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12.0, top: 80.0),
+                padding: const EdgeInsets.only(right: 12.0),
                 child: ReusableCard(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(
+                      16.0,
+                    ), // espaçamento interno do card
                     child: Column(
                       children: [
                         Text(
@@ -139,7 +126,44 @@ class _DashboardPageState extends State<DashboardPage> {
                                     color: AppStyles.blue,
                                     textColor: AppStyles.blue,
                                   ),
-                                  const SizedBox(height: 10),
+                                  //const SizedBox(height: 10),
+                                  // DropdownButtonHideUnderline(
+                                  //   child: DropdownButton<String>(
+                                  //     value: _colaboradorSelecionado,
+                                  //     hint: Text(
+                                  //       'Colaborador',
+                                  //       style: AppStyles.kufam(
+                                  //         14,
+                                  //         AppStyles.textGrey,
+                                  //         AppStyles.regular,
+                                  //       ),
+                                  //     ),
+                                  //     icon: const Icon(
+                                  //       Icons.arrow_drop_down,
+                                  //       color: AppStyles.textGrey,
+                                  //     ),
+                                  //     style: AppStyles.kufam(
+                                  //       14,
+                                  //       AppStyles.textGrey,
+                                  //       AppStyles.regular,
+                                  //     ),
+                                  //     onChanged: (String? newValue) {
+                                  //       setState(() {
+                                  //         _colaboradorSelecionado = newValue;
+                                  //       });
+                                  //     },
+                                  //     items: _colaboradores
+                                  //         .map<DropdownMenuItem<String>>((
+                                  //           String value,
+                                  //         ) {
+                                  //           return DropdownMenuItem<String>(
+                                  //             value: value,
+                                  //             child: Text(value),
+                                  //           );
+                                  //         })
+                                  //         .toList(),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -147,7 +171,9 @@ class _DashboardPageState extends State<DashboardPage> {
                             Expanded(
                               child: Container(
                                 height: 150,
-                                padding: const EdgeInsets.symmetric(horizontal: 1),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 1,
+                                ),
                                 child: BarChartComponent(
                                   data: [5, 6, 8, 7, 9, 10, 8, 7, 9, 8, 7, 9],
                                   color: AppStyles.blue,
@@ -171,14 +197,13 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
 
-
             // Segundo card
             Expanded(
               child: Padding(
-               padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 80.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ReusableCard(
                   child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         Text(
@@ -190,8 +215,42 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 10),
-                        
+                        // const SizedBox(height: 10),
+                        // DropdownButtonHideUnderline(
+                        //   child: DropdownButton<String>(
+                        //     value: _colaboradorSelecionado,
+                        //     hint: Text(
+                        //       'Colaborador',
+                        //       style: AppStyles.kufam(
+                        //         14,
+                        //         AppStyles.textGrey,
+                        //         AppStyles.regular,
+                        //       ),
+                        //     ),
+                        //     icon: const Icon(
+                        //       Icons.arrow_drop_down,
+                        //       color: AppStyles.textGrey,
+                        //     ),
+                        //     style: AppStyles.kufam(
+                        //       14,
+                        //       AppStyles.textGrey,
+                        //       AppStyles.regular,
+                        //     ),
+                        //     onChanged: (String? newValue) {
+                        //       setState(() {
+                        //         _colaboradorSelecionado = newValue;
+                        //       });
+                        //     },
+                        //     items: _colaboradores.map<DropdownMenuItem<String>>(
+                        //       (String value) {
+                        //         return DropdownMenuItem<String>(
+                        //           value: value,
+                        //           child: Text(value),
+                        //         );
+                        //       },
+                        //     ).toList(),
+                        //   ),
+                        // ),
                         const SizedBox(height: 10),
                         Container(
                           height: 150,
@@ -294,23 +353,32 @@ class _DashboardPageState extends State<DashboardPage> {
             // dropdowns periodo - colaborador
             Row(
               children: [
-                DropdownButton<String>(
-                  value: _periodoSelecionado,
-                  items: const [
-                    DropdownMenuItem(
-                      value: "semana",
-                      child: Text("Essa semana"),
-                    ),
-                    DropdownMenuItem(value: "mes", child: Text("Esse mês")),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => _periodoSelecionado = value);
-                    }
-                  },
-                ),
-                const SizedBox(width: 15),
-               
+                // DropdownButton<String>(
+                //   value: _periodoSelecionado,
+                //   items: const [
+                //     DropdownMenuItem(
+                //       value: "semana",
+                //       child: Text("Essa semana"),
+                //     ),
+                //     DropdownMenuItem(value: "mes", child: Text("Esse mês")),
+                //   ],
+                //   onChanged: (value) {
+                //     if (value != null) {
+                //       setState(() => _periodoSelecionado = value);
+                //     }
+                //   },
+                // ),
+                // const SizedBox(width: 15),
+                // DropdownButton<String>(
+                //   value: _colaboradorSelecionado,
+                //   hint: const Text("Colaborador"),
+                //   items: _colaboradores.map((colab) {
+                //     return DropdownMenuItem(value: colab, child: Text(colab));
+                //   }).toList(),
+                //   onChanged: (value) {
+                //     setState(() => _colaboradorSelecionado = value);
+                //   },
+                // ),
               ],
             ),
 

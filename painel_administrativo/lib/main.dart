@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/pages/administrar_missoes.dart';
-import 'package:painel_administrativo/pages/login.dart';
-import 'package:painel_administrativo/screens/analyze_projects_screen.dart';
+import 'package:painel_administrativo/screens/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -24,7 +22,7 @@ class PainelAdministrativo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Login(),
+      home: LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

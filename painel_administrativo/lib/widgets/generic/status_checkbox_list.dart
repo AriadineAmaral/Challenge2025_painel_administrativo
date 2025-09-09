@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/button.dart';
+import 'package:painel_administrativo/widgets/generic/button.dart';
 
 class StatusCheckboxList extends StatelessWidget {
   final List<bool> checks;

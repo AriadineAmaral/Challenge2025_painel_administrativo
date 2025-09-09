@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/pages/administrar_missoes.dart';
+import 'package:painel_administrativo/screens/manage_missions_screen.dart';
 import 'package:painel_administrativo/screens/analyze_projects_screen.dart';
 import 'package:painel_administrativo/screens/dashboard_screen.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/button.dart';
-import 'package:painel_administrativo/widgets/header.dart';
+import 'package:painel_administrativo/widgets/generic/button.dart';
+import 'package:painel_administrativo/widgets/generic/header.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double larguraTela = MediaQuery.of(context).size.width;
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
                      onPressed: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdministrarMissoes()),
+                          MaterialPageRoute(builder: (context) => ManageMissionsScreen()),
                         );
                      }
                     ),

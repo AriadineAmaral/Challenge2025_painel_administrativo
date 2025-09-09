@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 
-class Calendario {
+class Calendar {
   static Future<DateTime?> selecionarData({
     required BuildContext context,
     required DateTime dataInicial,

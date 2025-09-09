@@ -1,4 +1,4 @@
-class Missao {
+class Mission {
   final int idMissao;
   final String titulo;
   final int pontos;
@@ -8,7 +8,7 @@ class Missao {
   final String? link;
   final String? status;
 
-  Missao({
+  Mission({
     required this.idMissao,
     required this.titulo,
     required this.pontos,
@@ -19,9 +19,9 @@ class Missao {
     this.status,
   });
 
-  factory Missao.fromMap(Map<String, dynamic> map) {
+  factory Mission.fromMap(Map<String, dynamic> map) {
     final vencimento = DateTime.parse(map['data_vencimento'] as String);
-    return Missao(
+    return Mission(
       idMissao: map['id_missao'],
       titulo: map['titulo'],
       pontos: map['pontos'],

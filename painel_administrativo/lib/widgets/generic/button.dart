@@ -36,7 +36,7 @@ class Button extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          elevation: elevation, // <--- Aplica a sombra aqui
+          elevation: elevation, // 
         ),
         child: Text(text, style: textStyle),
       ),

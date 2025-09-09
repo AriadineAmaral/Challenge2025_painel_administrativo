@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/pages/home.dart';
+import 'package:painel_administrativo/screens/home_screen.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/button.dart';
-import 'package:painel_administrativo/widgets/custom_text_field%20.dart';
+import 'package:painel_administrativo/widgets/generic/button.dart';
+import 'package:painel_administrativo/widgets/generic/custom_text_field%20.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
@@ -90,7 +90,7 @@ class _LoginState extends State<Login> {
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => Home()),
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
                         );
                       },
                     ),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/cadastro_missao.dart';
-import 'package:painel_administrativo/widgets/card_missoes.dart';
-import 'package:painel_administrativo/widgets/header.dart';
-import 'package:painel_administrativo/widgets/status_checkbox_list.dart';
+import 'package:painel_administrativo/widgets/mission_screen/create_mission.dart';
+import 'package:painel_administrativo/widgets/mission_screen/mission_card.dart';
+import 'package:painel_administrativo/widgets/generic/header.dart';
+import 'package:painel_administrativo/widgets/generic/status_checkbox_list.dart';
 
-class AdministrarMissoes extends StatefulWidget {
-  const AdministrarMissoes({super.key});
+class ManageMissionsScreen extends StatefulWidget {
+  const ManageMissionsScreen({super.key});
 
   @override
-  State<AdministrarMissoes> createState() => _AdministrarMissoesState();
+  State<ManageMissionsScreen> createState() => _ManageMissionsScreenState();
 }
 
-class _AdministrarMissoesState extends State<AdministrarMissoes> {
+class _ManageMissionsScreenState extends State<ManageMissionsScreen> {
   List<bool> checks = [false, false, false];
   List<String> statusMissao = ['Ativas', 'Programadas', 'Encerradas'];
 
@@ -55,7 +55,7 @@ class _AdministrarMissoesState extends State<AdministrarMissoes> {
                             ),
                           ),
                           SizedBox(height: 10),
-                          CadastroMissao(),
+                          CreateMission(),
                         ],
                       ),
                     ),
@@ -77,7 +77,7 @@ class _AdministrarMissoesState extends State<AdministrarMissoes> {
                             },
                           ),
                           SizedBox(height: 10),
-                          CardMissoes(),
+                          MissionCard(),
                         ],
                       ),
                     ),
