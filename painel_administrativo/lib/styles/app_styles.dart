@@ -31,6 +31,20 @@ class AppStyles {
     );
   }
 
+   static InputDecoration customInputDecoration({required String labelText}) {
+    return InputDecoration(
+      labelText: labelText,
+      labelStyle: const TextStyle(color: Colors.grey),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: blue, width: 2),
+      ),
+    );
+  }
+
  static TextStyle kufam(double size, Color color, FontWeight fontWeight) {
     return GoogleFonts.kufam(
       fontSize: size,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/models/project.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/projects_screen/project_card.dart';
 import 'package:painel_administrativo/widgets/generic/header.dart';
 import 'package:painel_administrativo/widgets/generic/status_checkbox_list.dart';
+import 'package:painel_administrativo/data/service/project_service.dart';
+import 'package:painel_administrativo/models/project_model.dart';
 
 class AnalyzeProjects extends StatefulWidget {
   const AnalyzeProjects({super.key});
@@ -13,14 +14,24 @@ class AnalyzeProjects extends StatefulWidget {
 }
 
 class _AnalyzeProjectsState extends State<AnalyzeProjects> {
+  //  status checkboxes
   List<bool> checks = [false, false, false];
   List<String> statusProjeto = ['Análise', 'Desenvolvimento', 'Finalizado'];
 
-  bool analysis = false;
-  bool development = true;
-  bool finished = false;
+  late Future<List<ProjectView>> futureProjects;
 
-  List<Project> filteredProjects = [];
+  @override
+  void initState() {
+    super.initState();
+
+    futureProjects = ProjectService().fetchProjects();
+  }
+
+  void _reloadProjects() {
+    setState(() {
+      futureProjects = ProjectService().fetchProjects();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,29 +48,81 @@ class _AnalyzeProjectsState extends State<AnalyzeProjects> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 50, bottom: 60),
                   child: Text(
                     "Analisar projetos",
-                    style: AppStyles.kufam(
-                      30,
-                      AppStyles.black,
-                      AppStyles.semiBold,
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: AppStyles.black,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
+
                 StatusCheckboxList(
                   checks: checks,
                   titulo: "Lista de projetos",
                   status: statusProjeto,
                   onChanged: (index, value) {
                     setState(() {
-                      checks[index] = value;
+                    for (int i = 0; i < checks.length; i++) {
+                        checks[i] = false; 
+                      }
+                      checks[index] = value; 
+                      
+                      if (!checks.contains(true)) {
+                        futureProjects = ProjectService().fetchProjects();
+                      } else {
+                        
+                        if (checks[0]) {
+                          futureProjects = ProjectService()
+                              .fetchAnaliseProjects();
+                        }
+                      
+                        else if (checks[1]) {
+                          futureProjects = ProjectService()
+                              .fetchDesenvolvimentoProjects();
+                        }
+                        
+                        else if (checks[2]) {
+                          futureProjects = ProjectService()
+                              .fetchFinalizadoProjects();
+                        }
+                      }
                     });
                   },
                 ),
-                SizedBox(height: 12),
-                ProjectCard(),
+
+                const SizedBox(height: 12),
+
+                
+                FutureBuilder<List<ProjectView>>(
+                  future: futureProjects,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                    
+                      return Center(
+                        child: Text(
+                          'Erro ao carregar projetos: ${snapshot.error}',
+                        ),
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      
+                      return const Center(
+                        child: Text('Nenhum projeto encontrado.'),
+                      );
+                    } else {
+                      return ProjectCard(
+                        projects: snapshot.data!,
+                        onStatusUpdated:
+                            _reloadProjects,
+                      );
+                    }
+                  },
+                ),
               ],
             ),
           ),

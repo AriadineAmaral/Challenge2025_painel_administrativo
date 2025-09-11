@@ -1,261 +1,185 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/models/project.dart';
+import 'package:painel_administrativo/models/project_model.dart';
+import 'package:painel_administrativo/data/service/project_service.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
+import 'package:intl/intl.dart';
 
 class ProjectCard extends StatefulWidget {
-  const ProjectCard({super.key});
+  final List<ProjectView> projects;
+  final VoidCallback onStatusUpdated;
+
+  const ProjectCard({
+    super.key,
+    required this.projects,
+    required this.onStatusUpdated,
+  });
 
   @override
   State<ProjectCard> createState() => _ProjectCardState();
 }
 
 class _ProjectCardState extends State<ProjectCard> {
-  List<Project> projects = [
-    Project(
-      name: "Projeto Kaizen",
-      status: "desenvolvimento",
-      date: "06/09/2025",
-      collaborator: "Camila Antunes",
-    ),
-    Project(
-      name: "Projeto Clic",
-      status: "desenvolvimento",
-      date: "06/09/2025",
-      collaborator: "Felipe Moura",
-    ),
-    Project(
-      name: "Projeto Kaizen",
-      status: "desenvolvimento",
-      date: "06/09/2025",
-      collaborator: "Ricardo Oliveira",
-    ),
-    Project(
-      name: "Projeto Kaizen",
-      status: "desenvolvimento",
-      date: "06/09/2025",
-      collaborator: "Ricardo Oliveira",
-    ),
-    Project(
-      name: "Projeto Kaizen",
-      status: "desenvolvimento",
-      date: "06/09/2025",
-      collaborator: "Ricardo Oliveira",
-    ),
-  ];
+  final ProjectService _projectService = ProjectService();
 
-  void _showEditDialog(BuildContext context, int index) {
-    final project = projects[index];
-    final nameController = TextEditingController(text: project.name);
-    final dateController = TextEditingController(text: project.date);
-    final collaboratorController = TextEditingController(
-      text: project.collaborator,
-    );
+  final Map<String, int> statusMap = {
+    'Análise': 1,
+    'Desenvolvimento': 2,
+    'Finalizado': 3,
+  };
+
+  void _showEditDialog(BuildContext context, ProjectView project) {
+    final nameController = TextEditingController(text: project.titulo);
+    final dateController = TextEditingController(
+        text: DateFormat('dd/MM/yyyy').format(project.dataInicio));
+    final collaboratorController =
+        TextEditingController(text: project.nomeColaborador ?? 'N/A');
+
     final formKey = GlobalKey<FormState>();
-    String? selectedStatus = project.status; // Store the selected status
+
+   
+    String selectedStatus = project.status;
+    if (!statusMap.containsKey(selectedStatus)) {
+      selectedStatus = 'Análise'; 
+    }
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          backgroundColor: AppStyles.white,
-          contentPadding: const EdgeInsets.all(24),
-          title: Row(
-            children: [
-              const Icon(Icons.edit, color: AppStyles.blue, size: 24),
-              const SizedBox(width: 8),
-              Text(
-                'Editar Projeto',
-                style: AppStyles.kufam(20, AppStyles.blue, AppStyles.semiBold),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ],
-          ),
-          content: SizedBox(
-            width: 700,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              backgroundColor: AppStyles.white,
+              contentPadding: const EdgeInsets.all(24),
+              title: Row(
                 children: [
-                  TextFormField(
-                    controller: nameController,
-                    enabled: false, // Read-only
-                    decoration: InputDecoration(
-                      labelText: 'Nome do Projeto',
-                      labelStyle: AppStyles.kufam(
-                        14,
-                        AppStyles.black,
-                        AppStyles.regular,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: AppStyles.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: selectedStatus,
-                    decoration: InputDecoration(
-                      labelText: 'Status',
-                      labelStyle: AppStyles.kufam(
-                        14,
-                        AppStyles.black,
-                        AppStyles.regular,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: AppStyles.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'finalizado',
-                        child: Text('Finalizado'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'desenvolvimento',
-                        child: Text('Desenvolvimento'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'análise', // Added as a third option
-                        child: Text('Análise'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedStatus = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Por favor, selecione o status';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: dateController,
-                    enabled: false, // Read-only
-                    decoration: InputDecoration(
-                      labelText: 'Data',
-                      labelStyle: AppStyles.kufam(
-                        14,
-                        AppStyles.black,
-                        AppStyles.regular,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: AppStyles.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: collaboratorController,
-                    enabled: false, // Read-only
-                    decoration: InputDecoration(
-                      labelText: 'Colaborador',
-                      labelStyle: AppStyles.kufam(
-                        14,
-                        AppStyles.black,
-                        AppStyles.regular,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: AppStyles.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
+                  const Icon(Icons.edit, color: AppStyles.blue, size: 24),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Editar Projeto',
+                    style: AppStyles.kufam(20, AppStyles.blue, AppStyles.semiBold),
                   ),
                 ],
               ),
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text(
-                    'Cancelar',
-                    style: AppStyles.kufam(
-                      14,
-                      AppStyles.black,
-                      AppStyles.medium,
+              content: SizedBox(
+                width: 700,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameController,
+                          enabled: false,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Nome do Projeto',
+                          ),
+                          style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: selectedStatus,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Status',
+                          ),
+                          style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
+                          items: statusMap.keys.map((String statusName) {
+                            return DropdownMenuItem<String>(
+                              value: statusName,
+                              child: Text(statusName),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setDialogState(() {
+                              selectedStatus = value!;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || !statusMap.keys.contains(value)) {
+                              return 'Por favor, selecione um status válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: dateController,
+                          enabled: false,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Data de Início',
+                          ),
+                          style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: collaboratorController,
+                          enabled: false,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Colaborador',
+                          ),
+                          style: AppStyles.kufam(14, AppStyles.blue, AppStyles.medium),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      setState(() {
-                        projects[index] = Project(
-                          name: project.name, // Keep original name
-                          status:
-                              selectedStatus!, // Update with selected status
-                          date: project.date, // Keep original date
-                          collaborator: project
-                              .collaborator, // Keep original collaborator
-                        );
-                      });
-                      Navigator.of(context).pop(); // Close the dialog
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppStyles.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'Cancelar',
+                        style: AppStyles.kufam(
+                          14,
+                          AppStyles.black,
+                          AppStyles.medium,
+                        ),
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          final newStatusId = statusMap[selectedStatus];
+                          if (newStatusId != null) {
+                            await _projectService.updateProjectStatus(
+                                project.idProjeto, newStatusId);
+                            Navigator.of(context).pop();
+                            widget.onStatusUpdated();
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppStyles.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: Text(
+                        'Salvar',
+                        style: AppStyles.kufam(
+                          14,
+                          AppStyles.white,
+                          AppStyles.medium,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'Salvar',
-                    style: AppStyles.kufam(
-                      14,
-                      AppStyles.white,
-                      AppStyles.medium,
-                    ),
-                  ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -271,7 +195,7 @@ class _ProjectCardState extends State<ProjectCard> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: AppStyles.grey.withValues(alpha: 0.2),
+            color: AppStyles.grey.withOpacity(0.2),
             spreadRadius: 3,
           ),
         ],
@@ -280,10 +204,11 @@ class _ProjectCardState extends State<ProjectCard> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: projects.length,
+              itemCount: widget.projects.length,
               itemBuilder: (context, index) {
-                final project = projects[index];
+                final project = widget.projects[index];
                 Color circleColor;
+
                 switch (project.status.toLowerCase()) {
                   case 'desenvolvimento':
                     circleColor = Colors.yellow;
@@ -291,10 +216,12 @@ class _ProjectCardState extends State<ProjectCard> {
                   case 'finalizado':
                     circleColor = Colors.green;
                     break;
+                  case 'análise':
                   default:
                     circleColor = Colors.red;
                     break;
                 }
+
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     vertical: 8,
@@ -305,7 +232,10 @@ class _ProjectCardState extends State<ProjectCard> {
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        CircleAvatar(backgroundColor: circleColor, radius: 14),
+                        CircleAvatar(
+                          backgroundColor: circleColor,
+                          radius: 14,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           flex: 2,
@@ -314,7 +244,7 @@ class _ProjectCardState extends State<ProjectCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                project.name,
+                                project.titulo,
                                 style: AppStyles.kufam(
                                   16,
                                   AppStyles.blue,
@@ -329,13 +259,24 @@ class _ProjectCardState extends State<ProjectCard> {
                                   AppStyles.regular,
                                 ),
                               ),
+                              if (project.descricao.isNotEmpty)
+                                Text(
+                                  project.descricao,
+                                  style: AppStyles.kufam(
+                                    12,
+                                    Colors.grey[700]!,
+                                    AppStyles.regular,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                             ],
                           ),
                         ),
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "Inscrição\n${project.date}",
+                            "Início\n${DateFormat('dd/MM/yyyy').format(project.dataInicio)}",
                             style: AppStyles.kufam(
                               14,
                               Colors.black,
@@ -347,7 +288,7 @@ class _ProjectCardState extends State<ProjectCard> {
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "Colaborador\n${project.collaborator}",
+                            "Colaborador\n${project.nomeColaborador}",
                             style: AppStyles.kufam(
                               14,
                               AppStyles.blue,
@@ -358,11 +299,10 @@ class _ProjectCardState extends State<ProjectCard> {
                         ),
                         IconButton(
                           onPressed: () {
-                            _showEditDialog(context, index);
+                            _showEditDialog(context, project);
                           },
                           icon: const Icon(Icons.edit),
                           iconSize: 20,
-                          
                         ),
                       ],
                     ),
