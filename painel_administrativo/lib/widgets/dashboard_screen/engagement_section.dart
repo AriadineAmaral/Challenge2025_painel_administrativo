@@ -5,7 +5,12 @@ import 'package:painel_administrativo/widgets/dashboard_screen/engagement_chart.
 import 'package:painel_administrativo/widgets/dashboard_screen/reusable_card.dart';
 
 class EngagementSection extends StatefulWidget {
-  const EngagementSection({super.key});
+  final List<Map<String, dynamic>> engajamento;
+
+  const EngagementSection({
+    super.key,
+    required this.engajamento,
+  });
 
   @override
   State<EngagementSection> createState() => _EngagementSectionState();
@@ -16,15 +21,122 @@ class _EngagementSectionState extends State<EngagementSection> {
   int _projetoSelecionadoIndex = -1;
   int _engajamentoGeralIndex = -1;
 
+  int _monthIndexFromName(String? name) {
+    if (name == null) return -1;
+    final n = name.toLowerCase().trim();
+    switch (n) {
+      case 'janeiro':
+      case 'jan':
+        return 0;
+      case 'fevereiro':
+      case 'fev':
+        return 1;
+      case 'março':
+      case 'marco':
+      case 'mar':
+        return 2;
+      case 'abril':
+      case 'abr':
+        return 3;
+      case 'maio':
+      case 'mai':
+        return 4;
+      case 'junho':
+      case 'jun':
+        return 5;
+      case 'julho':
+      case 'jul':
+        return 6;
+      case 'agosto':
+      case 'ago':
+        return 7;
+      case 'setembro':
+      case 'set':
+        return 8;
+      case 'outubro':
+      case 'out':
+        return 9;
+      case 'novembro':
+      case 'nov':
+        return 10;
+      case 'dezembro':
+      case 'dez':
+        return 11;
+      default:
+        return -1;
+    }
+  }
+
+  int _computePercentageToShow() {
+    if (widget.engajamento.isEmpty) return 0;
+    if (_mesSelecionadoIndex >= 0) {
+      final found = widget.engajamento.firstWhere(
+        (e) => _monthIndexFromName(e['mes'] as String) == _mesSelecionadoIndex,
+        orElse: () => {},
+      );
+      if (found.isNotEmpty && found['porcentagem_total'] != null) {
+        final raw = (found['porcentagem_total'] as String)
+            .replaceAll('%', '')
+            .replaceAll(',', '.');
+        final val = double.tryParse(raw);
+        if (val != null) return val.round();
+      }
+    }
+
+    double sum = 0;
+    int count = 0;
+    for (final e in widget.engajamento) {
+      final p = e['porcentagem_total'];
+      if (p != null) {
+        final raw = (p as String).replaceAll('%', '').replaceAll(',', '.');
+        final v = double.tryParse(raw);
+        if (v != null) {
+          sum += v;
+          count++;
+        }
+      }
+    }
+    if (count == 0) return 0;
+    return (sum / count).round();
+  }
+
+  @override
+  void didUpdateWidget(covariant EngagementSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Atualiza o mês selecionado para o primeiro mês com dados quando os dados mudam
+    if (widget.engajamento.isNotEmpty) {
+      final firstMonthIndex = widget.engajamento
+          .map((e) => _monthIndexFromName(e['mes'] as String))
+          .firstWhere((idx) => idx >= 0, orElse: () => -1);
+      if (firstMonthIndex != -1 && firstMonthIndex != _mesSelecionadoIndex) {
+        setState(() {
+          _mesSelecionadoIndex = firstMonthIndex;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<double> monthsData = List<double>.filled(12, 0.0);
+    for (final e in widget.engajamento) {
+      final mesName = e['mes'] as String?;
+      final idx = _monthIndexFromName(mesName);
+      if (idx >= 0) {
+        final pontos = e['total_pontos'];
+        monthsData[idx] =
+            (pontos is num) ? pontos.toDouble() : double.tryParse('$pontos') ?? 0.0;
+      }
+    }
+
+    final percentageForCircle = _computePercentageToShow();
 
     return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Primeiro Card
+            // Primeiro Card - Engajamento por colaborador
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12.0),
@@ -35,11 +147,7 @@ class _EngagementSectionState extends State<EngagementSection> {
                       children: [
                         Text(
                           'Engajamento geral\npor colaborador',
-                          style: AppStyles.kufam(
-                            14,
-                            AppStyles.textGrey,
-                            AppStyles.medium,
-                          ),
+                          style: AppStyles.kufam(14, AppStyles.textGrey, AppStyles.medium),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
@@ -47,25 +155,19 @@ class _EngagementSectionState extends State<EngagementSection> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: Column(
-                                children: [
-                                  EngagementChart(
-                                    percentage: 65,
-                                    color: AppStyles.blue,
-                                    textColor: AppStyles.blue,
-                                  ),
-                                ],
+                              child: EngagementChart(
+                                percentage: percentageForCircle,
+                                color: AppStyles.blue,
+                                textColor: AppStyles.blue,
                               ),
                             ),
                             const SizedBox(width: 20),
                             Expanded(
                               child: Container(
                                 height: 150,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 1,
-                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 1),
                                 child: BarChartComponent(
-                                  data: [5, 6, 8, 7, 9, 10, 8, 7, 9, 8, 7, 9],
+                                  data: monthsData,
                                   color: AppStyles.blue,
                                   barWidth: 6,
                                   touchedIndex: _mesSelecionadoIndex,
@@ -87,7 +189,7 @@ class _EngagementSectionState extends State<EngagementSection> {
               ),
             ),
 
-            // Segundo Card
+            // Segundo Card - Inscrições em projetos
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -98,11 +200,7 @@ class _EngagementSectionState extends State<EngagementSection> {
                       children: [
                         Text(
                           'Inscrições em projetos',
-                          style: AppStyles.kufam(
-                            14,
-                            AppStyles.textGrey,
-                            AppStyles.medium,
-                          ),
+                          style: AppStyles.kufam(14, AppStyles.textGrey, AppStyles.medium),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),
@@ -129,7 +227,7 @@ class _EngagementSectionState extends State<EngagementSection> {
               ),
             ),
 
-            // Terceiro Card
+            // Terceiro Card - Engajamento geral de colaboradores
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 12.0),
@@ -146,11 +244,7 @@ class _EngagementSectionState extends State<EngagementSection> {
                         const SizedBox(height: 28),
                         Text(
                           'Engajamento geral\nde colaboradores',
-                          style: AppStyles.kufam(
-                            14,
-                            Colors.black,
-                            AppStyles.medium,
-                          ),
+                          style: AppStyles.kufam(14, Colors.black, AppStyles.medium),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 10),

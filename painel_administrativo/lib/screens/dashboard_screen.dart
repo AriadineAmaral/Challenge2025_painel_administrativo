@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/data/service/data_service.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/dashboard_screen/engagement_section.dart';
 import 'package:painel_administrativo/widgets/dashboard_screen/projects_section.dart';
 import 'package:painel_administrativo/widgets/generic/header.dart';
-
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -13,19 +13,48 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final List<String> _colaboradores = [
-    'Colaborador 1',
-    'Colaborador 2',
-    'Colaborador 3',
-  ];
+  final DataService _dataService = DataService();
 
-  // Estados gerais
+  List<String> _colaboradores = [];
+  bool _loadingColaboradores = true;
   String? _colaboradorSelecionado;
+
+   // Estados gerais
   // int _mesSelecionadoIndex = 8; // grafico de meses
   // int _projetoSelecionadoIndex = -1; // grafco de projetos
   // int _engajamentoGeralIndex = -1; // grafico geral
   // String _periodoSelecionado = "semana"; //semana ou mês
   // int _touchedMissionsIndex = -1; // grafico horizontal de missoes
+
+  List<Map<String, dynamic>> _engajamento = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadColaboradores();
+  }
+
+  Future<void> _loadColaboradores() async {
+    setState(() => _loadingColaboradores = true);
+    final colaboradores = await _dataService.fetchColaboradores();
+    setState(() {
+      _colaboradores = colaboradores;
+      _loadingColaboradores = false;
+      if (_colaboradores.isNotEmpty) {
+        _colaboradorSelecionado = _colaboradores[0];
+        _loadEngajamento(_colaboradorSelecionado!);
+      }
+    });
+  }
+
+  Future<void> _loadEngajamento(String colaboradorNome) async {
+    final eng = await _dataService.fetchEngajamentoPorColaborador(
+      colaboradorNome: colaboradorNome,
+    );
+    setState(() {
+      _engajamento = eng;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +68,20 @@ class _DashboardPageState extends State<DashboardPage> {
             width: larguraTela * 0.8,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+
               children: [
+                
+                const SizedBox(height: 50),
                 Padding(
                   padding: EdgeInsets.only(top: 50, bottom: 60),
-                  child: Text(
-                    "Dashboard de Engajamento",
-                    style: AppStyles.kufam(
-                      30,
-                      AppStyles.black,
-                      AppStyles.semiBold,
-                    ),
-                  ),
+                  child:
+                Text(
+                  "Dashboard de Engajamento",
+                  style:
+                      AppStyles.kufam(30, AppStyles.black, AppStyles.semiBold),
                 ),
+                ),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -66,29 +96,43 @@ class _DashboardPageState extends State<DashboardPage> {
                     const SizedBox(width: 10),
                     SizedBox(
                       width: larguraTela * 0.2,
-                      child: DropdownButton<String>(
-                        value: _colaboradorSelecionado,
-                        isExpanded: true,
-                        hint: const Text("Colaborador"),
-                        items: _colaboradores.map((colab) {
-                          return DropdownMenuItem(
-                            value: colab,
-                            child: Text(colab),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() => _colaboradorSelecionado = value);
-                        },
-                      ),
+                      child: _loadingColaboradores
+                          ? const Center(
+                              heightFactor: 1,
+                              child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator()))
+                          : (_colaboradores.isEmpty
+                              ? const Text('Nenhum colaborador')
+                              : DropdownButton<String>(
+                                  value: _colaboradorSelecionado,
+                                  isExpanded: true,
+                                  hint: const Text("Colaborador"),
+                                  items: _colaboradores.map((colab) {
+                                    return DropdownMenuItem(
+                                      value: colab,
+                                      child: Text(colab),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) async {
+                                    if (value != null) {
+                                      setState(() => _colaboradorSelecionado = value);
+                                      await _loadEngajamento(value);
+                                    }
+                                  },
+                                )),
                     ),
                   ],
                 ),
+                const SizedBox(height: 40),
+
+                // PASSA OS DADOS PARA O ENGAGEMENT SECTION
+                EngagementSection(engajamento: _engajamento),
 
                 const SizedBox(height: 40),
-                EngagementSection(),
-                const SizedBox(height: 40),
-                ProjectsSection(),
-                SizedBox(height: 30),
+                const ProjectsSection(),
+                const SizedBox(height: 30),
               ],
             ),
           ),

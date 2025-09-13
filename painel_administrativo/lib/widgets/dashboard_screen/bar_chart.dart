@@ -16,12 +16,57 @@ class BarChartComponent extends StatelessWidget {
     required this.barWidth,
     required this.touchedIndex,
     this.onBarTouch,
-    this.showFixedTitles = false, 
+    this.showFixedTitles = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    final meses = [
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez',
+    ];
+
+    Widget buildMonthTitle(double value, TitleMeta meta) {
+      final int index = value.toInt();
+      if (index < 0 || index >= meses.length) return const SizedBox.shrink();
+
+      if (!showFixedTitles) {
+        if (value.toInt() == touchedIndex &&
+            value.toInt() >= 0 &&
+            value.toInt() < meses.length) {
+          return SideTitleWidget(
+            axisSide: meta.axisSide,
+            space: 4,
+            child: Text(
+              meses[value.toInt()],
+              style: const TextStyle(fontSize: 10),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      } else {
+        // Mostrar só o mês selecionado
+        if (index == touchedIndex) {
+          return SideTitleWidget(
+            axisSide: meta.axisSide,
+            space: 4,
+            child: Text(meses[index], style: const TextStyle(fontSize: 10)),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      }
+    }
 
     return BarChart(
       BarChartData(
@@ -51,7 +96,9 @@ class BarChartComponent extends StatelessWidget {
             getTooltipItem: (_, __, ___, ____) => null,
           ),
           touchCallback: (event, response) {
-            if (response != null && response.spot != null && onBarTouch != null) {
+            if (response != null &&
+                response.spot != null &&
+                onBarTouch != null) {
               onBarTouch!(response.spot!.touchedBarGroupIndex);
             }
           },
