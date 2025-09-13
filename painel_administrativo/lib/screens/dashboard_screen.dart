@@ -19,16 +19,10 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _loadingColaboradores = true;
   String? _colaboradorSelecionado;
 
-  // Estados gerais
-  // int _mesSelecionadoIndex = 8; // grafico de meses
-  // int _projetoSelecionadoIndex = -1; // grafco de projetos
-  // int _engajamentoGeralIndex = -1; // grafico geral
-  // String _periodoSelecionado = "semana"; //semana ou mês
-  // int _touchedMissionsIndex = -1; // grafico horizontal de missoes
-
   List<Map<String, dynamic>> _engajamento = [];
-  List<Map<String, dynamic>> _projetos = []; // NOVO ESTADO
+  List<Map<String, dynamic>> _projetos = [];
   List<Map<String, dynamic>> _engajamentoGeral = [];
+  List<Map<String, dynamic>> _missoes = []; // NOVO ESTADO
 
   @override
   void initState() {
@@ -53,7 +47,8 @@ class _DashboardPageState extends State<DashboardPage> {
       if (_colaboradores.isNotEmpty) {
         _colaboradorSelecionado = _colaboradores[0];
         _loadEngajamento(_colaboradorSelecionado!);
-        _loadProjetos(_colaboradorSelecionado!); 
+        _loadProjetos(_colaboradorSelecionado!);
+        _loadMissoes(_colaboradorSelecionado!); // NOVO
       }
     });
   }
@@ -76,6 +71,15 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  Future<void> _loadMissoes(String colaboradorNome) async {
+    final missoes = await _dataService.fetchMissoesMes(
+      colaboradorNome: colaboradorNome,
+    );
+    setState(() {
+      _missoes = missoes;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double larguraTela = MediaQuery.of(context).size.width;
@@ -88,10 +92,9 @@ class _DashboardPageState extends State<DashboardPage> {
             width: larguraTela * 0.8,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-
               children: [
                 const SizedBox(height: 50),
-                Padding(
+                 Padding(
                   padding: EdgeInsets.only(top: 50, bottom: 60),
                   child: Text(
                     "Dashboard de Engajamento",
@@ -127,43 +130,43 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             )
                           : (_colaboradores.isEmpty
-                                ? const Text('Nenhum colaborador')
-                                : DropdownButton<String>(
-                                    value: _colaboradorSelecionado,
-                                    isExpanded: true,
-                                    hint: const Text("Colaborador"),
-                                    items: _colaboradores.map((colab) {
-                                      return DropdownMenuItem(
-                                        value: colab,
-                                        child: Text(colab),
+                              ? const Text('Nenhum colaborador')
+                              : DropdownButton<String>(
+                                  value: _colaboradorSelecionado,
+                                  isExpanded: true,
+                                  hint: const Text("Colaborador"),
+                                  items: _colaboradores.map((colab) {
+                                    return DropdownMenuItem(
+                                      value: colab,
+                                      child: Text(colab),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) async {
+                                    if (value != null) {
+                                      setState(
+                                        () => _colaboradorSelecionado = value,
                                       );
-                                    }).toList(),
-                                    onChanged: (value) async {
-                                      if (value != null) {
-                                        setState(
-                                          () => _colaboradorSelecionado = value,
-                                        );
-                                        await _loadEngajamento(value);
-                                        await _loadProjetos(
-                                          value,
-                                        ); 
-                                      }
-                                    },
-                                  )),
+                                      await _loadEngajamento(value);
+                                      await _loadProjetos(value);
+                                      await _loadMissoes(value); // NOVO
+                                    }
+                                  },
+                                )),
                     ),
                   ],
                 ),
                 const SizedBox(height: 40),
-
-             
-                EngagementSection(
-                  engajamento: _engajamento,
-                  projetos: _projetos,
-                  engajamentoGeral: _engajamentoGeral,
-                ),
-
+                _colaboradorSelecionado == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : EngagementSection(
+                        engajamento: _engajamento,
+                        projetos: _projetos,
+                        engajamentoGeral: _engajamentoGeral,
+                      ),
                 const SizedBox(height: 40),
-                const ProjectsSection(),
+                _colaboradorSelecionado == null
+                    ? const SizedBox.shrink()
+                    : ProjectsSection(missoes: _missoes), // ATUALIZADO
                 const SizedBox(height: 30),
               ],
             ),

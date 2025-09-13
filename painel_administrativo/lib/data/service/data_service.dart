@@ -79,7 +79,7 @@ class DataService {
     }
   }
 
- Future<List<Map<String, dynamic>>> fetchMissoesMes({required String colaboradorNome}) async {
+  Future<List<Map<String, dynamic>>> fetchMissoesMes({required String colaboradorNome}) async {
     try {
       final response = await supabase
           .from('vw_missoes_mes')
@@ -96,4 +96,3 @@ class DataService {
     }
   }
 }
-
