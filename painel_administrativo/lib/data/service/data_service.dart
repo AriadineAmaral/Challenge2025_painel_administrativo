@@ -47,10 +47,7 @@ class DataService {
           .from('vw_quantidade_projetos_colaborador')
           .select('mes, mes_num, total_projetos')
           .eq('nome', colaboradorNome)
-          .order(
-            'mes_num',
-            ascending: true,
-          );
+          .order('mes_num', ascending: true);
 
       print('Resposta projetos: $response');
 
@@ -70,7 +67,6 @@ class DataService {
           .from('vw_engajamento_geral')
           .select('engajamento, percentual_total, mes');
 
-
       print('Resposta engajamento geral: $response');
 
       if (response == null) return [];
@@ -82,4 +78,22 @@ class DataService {
       return [];
     }
   }
+
+ Future<List<Map<String, dynamic>>> fetchMissoesMes({required String colaboradorNome}) async {
+    try {
+      final response = await supabase
+          .from('vw_missoes_mes')
+          .select('mes, pontos')
+          .eq('nome', colaboradorNome)
+          .order('mes', ascending: true);
+      if (response == null) return [];
+      return (response as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    } catch (e) {
+      print('Erro ao buscar missões mês: $e');
+      return [];
+    }
+  }
 }
+

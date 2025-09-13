@@ -11,12 +11,12 @@ class ProjectsSection extends StatefulWidget {
 }
 
 class _ProjectsSectionState extends State<ProjectsSection> {
-  final String _periodoSelecionado = "semana";
+  // Remova a palavra-chave 'final' para que a variável possa ser alterada
+  String _periodoSelecionado = "semana";
   int _touchedMissionsIndex = -1;
 
   @override
   Widget build(BuildContext context) {
-
     return ReusableCard(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,28 +38,26 @@ class _ProjectsSectionState extends State<ProjectsSection> {
             ),
             const SizedBox(height: 25),
 
-            // Dropdowns comentados (podem ser ativados conforme necessário)
             Row(
               children: [
-                // Exemplo de dropdown para período
-                // DropdownButton<String>(
-                //   value: _periodoSelecionado,
-                //   items: const [
-                //     DropdownMenuItem(
-                //       value: "semana",
-                //       child: Text("Essa semana"),
-                //     ),
-                //     DropdownMenuItem(
-                //       value: "mes",
-                //       child: Text("Esse mês"),
-                //     ),
-                //   ],
-                //   onChanged: (value) {
-                //     if (value != null) {
-                //       setState(() => _periodoSelecionado = value);
-                //     }
-                //   },
-                // ),
+                DropdownButton<String>(
+                  value: _periodoSelecionado,
+                  items: const [
+                    DropdownMenuItem(
+                      value: "semana",
+                      child: Text("Essa semana"),
+                    ),
+                    DropdownMenuItem(
+                      value: "mes",
+                      child: Text("Esse mês"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => _periodoSelecionado = value);
+                    }
+                  },
+                ),
               ],
             ),
 
