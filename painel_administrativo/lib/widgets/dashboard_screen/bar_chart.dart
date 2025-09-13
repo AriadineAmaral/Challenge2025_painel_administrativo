@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:painel_administrativo/styles/app_styles.dart';
 
 class BarChartComponent extends StatelessWidget {
   final List<double> data;
@@ -55,7 +56,6 @@ class BarChartComponent extends StatelessWidget {
         }
         return const SizedBox.shrink();
       } else {
-        // Mostrar só o mês selecionado
         if (index == touchedIndex) {
           return SideTitleWidget(
             axisSide: meta.axisSide,
@@ -90,10 +90,19 @@ class BarChartComponent extends StatelessWidget {
         }).toList(),
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: Colors.transparent,
-            tooltipPadding: EdgeInsets.zero,
-            tooltipMargin: 0,
-            getTooltipItem: (_, __, ___, ____) => null,
+            tooltipBgColor: AppStyles.blue.withOpacity(
+              0.8,
+            ), 
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final value = rod.toY.round(); 
+              return BarTooltipItem(
+                '$value', 
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
           ),
           touchCallback: (event, response) {
             if (response != null &&
@@ -103,6 +112,7 @@ class BarChartComponent extends StatelessWidget {
             }
           },
         ),
+
         titlesData: FlTitlesData(
           show: true,
           bottomTitles: AxisTitles(
@@ -111,7 +121,6 @@ class BarChartComponent extends StatelessWidget {
               reservedSize: 28,
               getTitlesWidget: (value, meta) {
                 if (showFixedTitles) {
-                  // logica para títulos fixos
                   if (value.toInt() >= 0 && value.toInt() < meses.length) {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
@@ -123,8 +132,9 @@ class BarChartComponent extends StatelessWidget {
                     );
                   }
                 } else {
-                  // logica para títulos dinâmicos
-                  if (value.toInt() == touchedIndex && value.toInt() >= 0 && value.toInt() < meses.length) {
+                  if (value.toInt() == touchedIndex &&
+                      value.toInt() >= 0 &&
+                      value.toInt() < meses.length) {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
                       space: 4,

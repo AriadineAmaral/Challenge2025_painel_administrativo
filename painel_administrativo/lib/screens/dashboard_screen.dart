@@ -19,7 +19,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _loadingColaboradores = true;
   String? _colaboradorSelecionado;
 
-   // Estados gerais
+  // Estados gerais
   // int _mesSelecionadoIndex = 8; // grafico de meses
   // int _projetoSelecionadoIndex = -1; // grafco de projetos
   // int _engajamentoGeralIndex = -1; // grafico geral
@@ -27,11 +27,21 @@ class _DashboardPageState extends State<DashboardPage> {
   // int _touchedMissionsIndex = -1; // grafico horizontal de missoes
 
   List<Map<String, dynamic>> _engajamento = [];
+  List<Map<String, dynamic>> _projetos = []; // NOVO ESTADO
+  List<Map<String, dynamic>> _engajamentoGeral = [];
 
   @override
   void initState() {
     super.initState();
     _loadColaboradores();
+    _loadEngajamentoGeral();
+  }
+
+  Future<void> _loadEngajamentoGeral() async {
+    final engajamentoGeral = await _dataService.fetchEngajamentoGeral();
+    setState(() {
+      _engajamentoGeral = engajamentoGeral;
+    });
   }
 
   Future<void> _loadColaboradores() async {
@@ -43,6 +53,7 @@ class _DashboardPageState extends State<DashboardPage> {
       if (_colaboradores.isNotEmpty) {
         _colaboradorSelecionado = _colaboradores[0];
         _loadEngajamento(_colaboradorSelecionado!);
+        _loadProjetos(_colaboradorSelecionado!); 
       }
     });
   }
@@ -53,6 +64,15 @@ class _DashboardPageState extends State<DashboardPage> {
     );
     setState(() {
       _engajamento = eng;
+    });
+  }
+
+  Future<void> _loadProjetos(String colaboradorNome) async {
+    final proj = await _dataService.fetchProjetosPorMes(
+      colaboradorNome: colaboradorNome,
+    );
+    setState(() {
+      _projetos = proj;
     });
   }
 
@@ -70,16 +90,17 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
 
               children: [
-                
                 const SizedBox(height: 50),
                 Padding(
                   padding: EdgeInsets.only(top: 50, bottom: 60),
-                  child:
-                Text(
-                  "Dashboard de Engajamento",
-                  style:
-                      AppStyles.kufam(30, AppStyles.black, AppStyles.semiBold),
-                ),
+                  child: Text(
+                    "Dashboard de Engajamento",
+                    style: AppStyles.kufam(
+                      30,
+                      AppStyles.black,
+                      AppStyles.semiBold,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Row(
@@ -100,35 +121,46 @@ class _DashboardPageState extends State<DashboardPage> {
                           ? const Center(
                               heightFactor: 1,
                               child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator()))
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
                           : (_colaboradores.isEmpty
-                              ? const Text('Nenhum colaborador')
-                              : DropdownButton<String>(
-                                  value: _colaboradorSelecionado,
-                                  isExpanded: true,
-                                  hint: const Text("Colaborador"),
-                                  items: _colaboradores.map((colab) {
-                                    return DropdownMenuItem(
-                                      value: colab,
-                                      child: Text(colab),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) async {
-                                    if (value != null) {
-                                      setState(() => _colaboradorSelecionado = value);
-                                      await _loadEngajamento(value);
-                                    }
-                                  },
-                                )),
+                                ? const Text('Nenhum colaborador')
+                                : DropdownButton<String>(
+                                    value: _colaboradorSelecionado,
+                                    isExpanded: true,
+                                    hint: const Text("Colaborador"),
+                                    items: _colaboradores.map((colab) {
+                                      return DropdownMenuItem(
+                                        value: colab,
+                                        child: Text(colab),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) async {
+                                      if (value != null) {
+                                        setState(
+                                          () => _colaboradorSelecionado = value,
+                                        );
+                                        await _loadEngajamento(value);
+                                        await _loadProjetos(
+                                          value,
+                                        ); 
+                                      }
+                                    },
+                                  )),
                     ),
                   ],
                 ),
                 const SizedBox(height: 40),
 
-                // PASSA OS DADOS PARA O ENGAGEMENT SECTION
-                EngagementSection(engajamento: _engajamento),
+             
+                EngagementSection(
+                  engajamento: _engajamento,
+                  projetos: _projetos,
+                  engajamentoGeral: _engajamentoGeral,
+                ),
 
                 const SizedBox(height: 40),
                 const ProjectsSection(),

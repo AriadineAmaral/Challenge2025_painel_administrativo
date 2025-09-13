@@ -4,19 +4,19 @@ final supabase = Supabase.instance.client;
 
 class DataService {
   Future<List<String>> fetchColaboradores() async {
-  try {
-    final response = await supabase
-        .from('vw_colaboradores_app')
-        .select('nome')
-        .order('nome');
+    try {
+      final response = await supabase
+          .from('vw_colaboradores_app')
+          .select('nome')
+          .order('nome');
 
-    if (response == null) return [];
-    return (response as List).map((e) => e['nome'] as String).toList();
-  } catch (e) {
-    print('Erro ao buscar colaboradores: $e');
-    return [];
+      if (response == null) return [];
+      return (response as List).map((e) => e['nome'] as String).toList();
+    } catch (e) {
+      print('Erro ao buscar colaboradores: $e');
+      return [];
+    }
   }
-}
 
   Future<List<Map<String, dynamic>>> fetchEngajamentoPorColaborador({
     required String colaboradorNome,
@@ -35,6 +35,50 @@ class DataService {
           .toList();
     } catch (e) {
       print('Erro ao buscar engajamento do colaborador: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchProjetosPorMes({
+    required String colaboradorNome,
+  }) async {
+    try {
+      final response = await supabase
+          .from('vw_quantidade_projetos_colaborador')
+          .select('mes, mes_num, total_projetos')
+          .eq('nome', colaboradorNome)
+          .order(
+            'mes_num',
+            ascending: true,
+          );
+
+      print('Resposta projetos: $response');
+
+      if (response == null) return [];
+      return (response as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    } catch (e) {
+      print('Erro ao buscar projetos do colaborador: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchEngajamentoGeral() async {
+    try {
+      final response = await supabase
+          .from('vw_engajamento_geral')
+          .select('engajamento, percentual_total, mes');
+
+
+      print('Resposta engajamento geral: $response');
+
+      if (response == null) return [];
+      return (response as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    } catch (e) {
+      print('Erro ao buscar engajamento geral: $e');
       return [];
     }
   }
