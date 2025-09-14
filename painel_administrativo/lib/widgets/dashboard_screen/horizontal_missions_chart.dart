@@ -1,18 +1,18 @@
-// No arquivo horizontal_missions_chart.dart
-
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 
 class HorizontalMissionsChart extends StatelessWidget {
   final List<double> data;
-  final String periodo; // semana/mes
+  final List<String> labels;
+  final String periodo;
   final int touchedIndex;
   final void Function(int index)? onBarTouch;
 
   const HorizontalMissionsChart({
     super.key,
     required this.data,
+    required this.labels,
     required this.periodo,
     required this.touchedIndex,
     this.onBarTouch,
@@ -20,28 +20,25 @@ class HorizontalMissionsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final diasSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-    final meses = [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
-    ];
-
-    final labels = periodo == "semana" ? diasSemana : meses;
+    // CORREÇÃO: Verifica se a lista de dados está vazia
+    if (data.isEmpty) {
+      return const Center(
+        child: Text(
+          "Nenhum dado de missões concluídas encontrado para este período.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppStyles.textGrey,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
 
     final maxValue = (data.reduce((a, b) => a > b ? a : b) * 1.2);
 
     return RotatedBox(
-      quarterTurns: 1, // deixar o grafico horizontal
+      quarterTurns: 1,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceBetween,
@@ -64,7 +61,6 @@ class HorizontalMissionsChart extends StatelessWidget {
               ],
             );
           }).toList(),
-
           barTouchData: BarTouchData(
             enabled: true,
             touchCallback: (event, response) {
@@ -97,7 +93,6 @@ class HorizontalMissionsChart extends StatelessWidget {
               },
             ),
           ),
-
           titlesData: FlTitlesData(
             leftTitles: const AxisTitles(
               sideTitles: SideTitles(showTitles: false),
@@ -132,7 +127,6 @@ class HorizontalMissionsChart extends StatelessWidget {
             rightTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-               
                 reservedSize: 50,
                 interval: maxValue / 5,
                 getTitlesWidget: (value, meta) {

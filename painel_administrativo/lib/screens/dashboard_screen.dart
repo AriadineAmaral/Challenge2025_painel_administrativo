@@ -22,7 +22,8 @@ class _DashboardPageState extends State<DashboardPage> {
   List<Map<String, dynamic>> _engajamento = [];
   List<Map<String, dynamic>> _projetos = [];
   List<Map<String, dynamic>> _engajamentoGeral = [];
-  List<Map<String, dynamic>> _missoes = []; // NOVO ESTADO
+  List<Map<String, dynamic>> _missoesMes = []; // ATUALIZADO
+  List<Map<String, dynamic>> _missoesSemana = []; // NOVO ESTADO
 
   @override
   void initState() {
@@ -48,7 +49,8 @@ class _DashboardPageState extends State<DashboardPage> {
         _colaboradorSelecionado = _colaboradores[0];
         _loadEngajamento(_colaboradorSelecionado!);
         _loadProjetos(_colaboradorSelecionado!);
-        _loadMissoes(_colaboradorSelecionado!); // NOVO
+        _loadMissoesMes(_colaboradorSelecionado!); // ATUALIZADO
+        _loadMissoesSemana(_colaboradorSelecionado!); // NOVO
       }
     });
   }
@@ -71,12 +73,23 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
-  Future<void> _loadMissoes(String colaboradorNome) async {
+  // ATUALIZADO: Renomeado para carregar dados do mês
+  Future<void> _loadMissoesMes(String colaboradorNome) async {
     final missoes = await _dataService.fetchMissoesMes(
       colaboradorNome: colaboradorNome,
     );
     setState(() {
-      _missoes = missoes;
+      _missoesMes = missoes;
+    });
+  }
+  
+  // NOVO: Método para carregar os dados da semana
+  Future<void> _loadMissoesSemana(String colaboradorNome) async {
+    final missoes = await _dataService.fetchMissoesSemana(
+      colaboradorNome: colaboradorNome,
+    );
+    setState(() {
+      _missoesSemana = missoes;
     });
   }
 
@@ -94,8 +107,8 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 50),
-                 Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 60),
+                Padding(
+                  padding: const EdgeInsets.only(top: 50, bottom: 60),
                   child: Text(
                     "Dashboard de Engajamento",
                     style: AppStyles.kufam(
@@ -148,7 +161,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                       );
                                       await _loadEngajamento(value);
                                       await _loadProjetos(value);
-                                      await _loadMissoes(value); // NOVO
+                                      await _loadMissoesMes(value);
+                                      await _loadMissoesSemana(value); // NOVO
                                     }
                                   },
                                 )),
@@ -166,7 +180,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 40),
                 _colaboradorSelecionado == null
                     ? const SizedBox.shrink()
-                    : ProjectsSection(missoes: _missoes), // ATUALIZADO
+                    : ProjectsSection(missoesMes: _missoesMes, missoesSemana: _missoesSemana), // ATUALIZADO
                 const SizedBox(height: 30),
               ],
             ),

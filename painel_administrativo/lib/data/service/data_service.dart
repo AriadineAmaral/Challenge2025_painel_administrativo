@@ -83,9 +83,10 @@ class DataService {
     try {
       final response = await supabase
           .from('vw_missoes_mes')
-          .select('mes, pontos')
+          .select('mes, mes_num, qtd_missoes')
           .eq('nome', colaboradorNome)
-          .order('mes', ascending: true);
+
+          .order('mes_num', ascending: true);
       if (response == null) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
@@ -95,4 +96,22 @@ class DataService {
       return [];
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchMissoesSemana({required String colaboradorNome}) async {
+    try {
+      final response = await supabase
+          .from('vw_pontuacao_semana')
+          .select('dia_semana, qtd_missoes')
+          .eq('nome', colaboradorNome);
+
+      if (response == null) return [];
+      return (response as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    } catch (e) {
+      print('Erro ao buscar missões semana: $e');
+      return [];
+    }
+  }
+
 }

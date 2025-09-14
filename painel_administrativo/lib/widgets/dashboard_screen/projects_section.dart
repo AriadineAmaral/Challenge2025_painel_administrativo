@@ -4,8 +4,14 @@ import 'package:painel_administrativo/widgets/dashboard_screen/horizontal_missio
 import 'package:painel_administrativo/widgets/dashboard_screen/reusable_card.dart';
 
 class ProjectsSection extends StatefulWidget {
-  final List<Map<String, dynamic>> missoes; // NOVO
-  const ProjectsSection({super.key, required this.missoes}); // NOVO
+  final List<Map<String, dynamic>> missoesMes;
+  final List<Map<String, dynamic>> missoesSemana;
+
+  const ProjectsSection({
+    super.key,
+    required this.missoesMes,
+    required this.missoesSemana,
+  });
 
   @override
   State<ProjectsSection> createState() => _ProjectsSectionState();
@@ -17,7 +23,20 @@ class _ProjectsSectionState extends State<ProjectsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final List<double> missoesData = widget.missoes.map<double>((e) => (e['pontos'] as num).toDouble()).toList(); // NOVO
+    final List<Map<String, dynamic>> dadosAtivos =
+        _periodoSelecionado == "semana" ? widget.missoesSemana : widget.missoesMes;
+
+    // AQUI ESTÁ A MUDANÇA: Troque 'pontos' por 'qtd_missoes'
+    final List<double> missoesData = dadosAtivos
+      .map<double>((e) => (e['qtd_missoes'] as num).toDouble())
+      .toList();
+    
+    final List<String> labels = dadosAtivos.map<String>((e) {
+      if (_periodoSelecionado == "semana") {
+        return e['dia_semana'] as String;
+      }
+      return e['mes'] as String;
+    }).toList();
 
     return ReusableCard(
       child: Padding(
@@ -66,9 +85,8 @@ class _ProjectsSectionState extends State<ProjectsSection> {
               height: 350,
               width: 1200,
               child: HorizontalMissionsChart(
-                data: _periodoSelecionado == "semana"
-                    ? [50, 30, 70, 90, 60, 40, 80] // Mock de dados de semana
-                    : missoesData, // USANDO OS DADOS REAIS DO SUPABASE
+                data: missoesData,
+                labels: labels,
                 periodo: _periodoSelecionado,
                 touchedIndex: _touchedMissionsIndex,
                 onBarTouch: (index) {
