@@ -1,4 +1,4 @@
-import 'package:painel_administrativo/models/project_model.dart';
+import 'package:painel_administrativo/models/project.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProjectService {

@@ -4,7 +4,7 @@ import 'package:painel_administrativo/widgets/projects_screen/project_card.dart'
 import 'package:painel_administrativo/widgets/generic/header.dart';
 import 'package:painel_administrativo/widgets/generic/status_checkbox_list.dart';
 import 'package:painel_administrativo/data/service/project_service.dart';
-import 'package:painel_administrativo/models/project_model.dart';
+import 'package:painel_administrativo/models/project.dart';
 
 class AnalyzeProjects extends StatefulWidget {
   const AnalyzeProjects({super.key});

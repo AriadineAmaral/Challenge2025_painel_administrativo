@@ -2,47 +2,44 @@ class Mission {
   final int idMissao;
   final String titulo;
   final int pontos;
-  final bool? disponivel;
-  final DateTime dataInicio;
+  final bool disponivel;
   final DateTime dataVencimento;
   final String? link;
-  final String? status;
+
 
   Mission({
     required this.idMissao,
     required this.titulo,
     required this.pontos,
-     this.disponivel,
-    required this.dataInicio,
+    required this.disponivel,
     required this.dataVencimento,
     this.link,
-    this.status,
   });
-
-  factory Mission.fromMap(Map<String, dynamic> map) {
-    final vencimento = DateTime.parse(map['data_vencimento'] as String);
+  factory Mission.fromJson(Map<String, dynamic> json) {
     return Mission(
-      idMissao: map['id_missao'],
-      titulo: map['titulo'],
-      pontos: map['pontos'],
-      disponivel: map['disponivel'],
-      dataInicio: calcularDataInicio(vencimento),
-      dataVencimento: vencimento,
-      link: map['link'],
-    );
-  }
+      idMissao: json['idMissao'] as int,
+      titulo: json['titulo'] as String,
+      pontos: json['pontos'] as int,
+      disponivel: json['disponivel'] as bool,
+      dataVencimento: DateTime.parse(json['dataVencimento'] as String),
+      link: json['link'] as String?,
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id_missao': idMissao,
-      'titulo': titulo,
-      'pontos': pontos,
-      'disponivel': disponivel,
-      'data_vencimento': dataVencimento,
-    };
+    );
   }
 
   static DateTime calcularDataInicio(DateTime dataVencimento) {
     return DateTime(dataVencimento.year, dataVencimento.month, 1);
+  }
+
+  String get status {
+    final agora = DateTime.now();
+    if (dataVencimento.year < agora.year ||
+        (dataVencimento.year == agora.year && dataVencimento.month < agora.month)) {
+      return 'Encerrada';
+    } else if (dataVencimento.year == agora.year && dataVencimento.month == agora.month) {
+      return 'Ativa';
+    } else {
+      return 'Programada';
+    }
   }
 }

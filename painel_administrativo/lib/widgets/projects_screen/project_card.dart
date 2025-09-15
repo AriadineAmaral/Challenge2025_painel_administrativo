@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/models/project_model.dart';
+import 'package:painel_administrativo/models/project.dart';
 import 'package:painel_administrativo/data/service/project_service.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:intl/intl.dart';

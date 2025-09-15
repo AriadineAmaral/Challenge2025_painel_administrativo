@@ -1,33 +1,43 @@
-class Project {
+class ProjectView {
   final int idProjeto;
-  final String titulo;
-  final String? descricao;
+  final String titulo;           
+  final String descricao;
+  final String nomeProjetoTipo; 
+  final String nomeArquivo;
+  final String caminhoArquivo;
+  final String status;
   final DateTime dataInicio;
-  final DateTime? dataFim;
-  final int? idStatusProjeto;
-  final int? tipoProjeto;
+  final String nomeColaborador;
+  final String? fotoUrl;
+  final int idStatusProjeto;
 
-  Project({
+  ProjectView({
     required this.idProjeto,
     required this.titulo,
-    this.descricao,
+    required this.descricao,
+    required this.nomeProjetoTipo,
+    required this.nomeArquivo,
+    required this.caminhoArquivo,
+    required this.status,
     required this.dataInicio,
-    this.dataFim,
-    this.idStatusProjeto,
-    this.tipoProjeto,
+    required this.nomeColaborador,
+    this.fotoUrl,
+    required this.idStatusProjeto,
   });
 
-  factory Project.fromJson(Map<String, dynamic> json) {
-    return Project(
+  factory ProjectView.fromJson(Map<String, dynamic> json) {
+    return ProjectView(
       idProjeto: json['id_projeto'] as int,
-      titulo: json['titulo'] as String,
-      descricao: json['descricao'] as String?,
+      titulo: json['titulo'] as String,  
+      descricao: json['descricao'] as String? ?? '',
+      nomeProjetoTipo: json['nome_projeto'] as String? ?? '',
+      nomeArquivo: json['nome_arquivo'] as String? ?? '',
+      caminhoArquivo: json['caminho'] as String? ?? '',
+      status: json['status'] as String? ?? '',
       dataInicio: DateTime.parse(json['data_inicio'] as String),
-      dataFim: json['data_fim'] != null
-          ? DateTime.parse(json['data_fim'] as String)
-          : null,
-      idStatusProjeto: json['id_status_projetos'] as int?,
-      tipoProjeto: json['tipo_projeto'] as int?,
+      nomeColaborador: json['nome_colaborador'] as String? ?? '',
+      fotoUrl: json['foto_url'] as String?,
+      idStatusProjeto: json['id_status_projetos'] as int,
     );
   }
 }

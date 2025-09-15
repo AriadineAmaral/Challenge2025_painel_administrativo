@@ -1,58 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/data/repository/remotes/remote_mission_repository.dart';
 import 'package:painel_administrativo/models/mission.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/mission_screen/edit_mission.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MissionCard extends StatefulWidget {
-  const MissionCard({super.key});
+  final List<bool> checks;
+  const MissionCard({super.key, required this.checks});
 
   @override
   State<MissionCard> createState() => _MissionCardState();
 }
 
 class _MissionCardState extends State<MissionCard> {
-  List<Mission> missoes = [
-    Mission(
-      idMissao: 1,
-      titulo: "Participe do fórum de ideias",
-      status: "Ativa",
-      dataInicio: Mission.calcularDataInicio(DateTime(2025, 9, 30)),
-      dataVencimento: DateTime(2025, 9, 30),
-      pontos: 8,
-    ),
-    Mission(
-      idMissao: 2,
-      titulo: "Leia o artigo sobre inteligência emocional",
-      status: "Programada",
-      dataInicio: Mission.calcularDataInicio(DateTime(2025, 10, 31)),
-      dataVencimento: DateTime(2025, 10, 31),
-      pontos: 5,
-    ),
-    Mission(
-      idMissao: 3,
-      titulo: "Assista ao vídeo sobre trabalho em equipe",
-      status: "Encerrada",
-      dataInicio: Mission.calcularDataInicio(DateTime(2025, 8, 31)),
-      dataVencimento: DateTime(2025, 8, 31),
-      pontos: 10,
-    ),
-    Mission(
-      idMissao: 4,
-      titulo: "Complete o quiz sobre valores da empresa",
-      status: "Encerrada",
-      dataInicio: Mission.calcularDataInicio(DateTime(2025, 8, 31)),
-      dataVencimento: DateTime(2025, 8, 31),
-      pontos: 25,
-    ),
-    Mission(
-      idMissao: 5,
-      titulo: "Responda à pesquisa de engajamento",
-      status: "Encerrada",
-      dataInicio: Mission.calcularDataInicio(DateTime(2025, 7, 31)),
-      dataVencimento: DateTime(2025, 7, 31),
-      pontos: 18,
-    ),
-  ];
+  final missaoRepo = RemoteMissionRepository(client: Supabase.instance.client);
+
+  List<Mission> missoes = [];
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllData();
+  }
+
+  Future<void> _loadAllData() async {
+    setState(() => isLoading = true);
+    try {
+      await Future.wait([_findMissoes()]);
+    } catch (e) {
+      throw ("erro $e");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _findMissoes() async {
+    final resultado = await missaoRepo.listMissoes();
+    setState(() {
+      missoes = resultado;
+    });
+  }
 
   String formatarData(DateTime data) {
     return "${data.day.toString().padLeft(2, '0')}/"
@@ -62,6 +52,18 @@ class _MissionCardState extends State<MissionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final statusSelecionados = <String>[];
+    if (widget.checks[0]) statusSelecionados.add('Ativa');
+    if (widget.checks[1]) statusSelecionados.add('Programada');
+    if (widget.checks[2]) statusSelecionados.add('Encerrada');
+
+    final bool nenhumFiltroAtivo = statusSelecionados.isEmpty;
+
+   final missoesFiltradas = nenhumFiltroAtivo
+    ? missoes
+    : missoes.where((m) => statusSelecionados.contains(m.status)).toList();
+
+
     return Container(
       width: 800,
       height: 400,
@@ -79,9 +81,15 @@ class _MissionCardState extends State<MissionCard> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: missoes.length,
+              itemCount: missoesFiltradas.length,
               itemBuilder: (context, index) {
-                final missao = missoes[index];
+                final missao = missoesFiltradas[index];
+                
+
+                DateTime dataInicio = Mission.calcularDataInicio(
+                  missao.dataVencimento,
+                );
+
                 return Card(
                   margin: const EdgeInsets.symmetric(
                     vertical: 8,
@@ -125,7 +133,7 @@ class _MissionCardState extends State<MissionCard> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "Início\n${formatarData(missao.dataInicio)}",
+                                "Início\n${formatarData(dataInicio)}",
                                 style: AppStyles.kufam(
                                   14,
                                   AppStyles.black,

@@ -10,7 +10,7 @@ class DataService {
           .select('nome')
           .order('nome');
 
-      if (response == null) return [];
+      if (response.isEmpty) return [];
       return (response as List).map((e) => e['nome'] as String).toList();
     } catch (e) {
       print('Erro ao buscar colaboradores: $e');
@@ -51,7 +51,7 @@ class DataService {
 
       print('Resposta projetos: $response');
 
-      if (response == null) return [];
+      if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
@@ -69,7 +69,7 @@ class DataService {
 
       print('Resposta engajamento geral: $response');
 
-      if (response == null) return [];
+      if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
@@ -87,7 +87,7 @@ class DataService {
           .eq('nome', colaboradorNome)
 
           .order('mes_num', ascending: true);
-      if (response == null) return [];
+      if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();

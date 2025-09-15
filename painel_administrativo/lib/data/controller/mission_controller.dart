@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MissaoController {
+class MissionController {
   final TextEditingController tituloController = TextEditingController();
   final TextEditingController pontosController = TextEditingController();
   final TextEditingController linkController = TextEditingController();

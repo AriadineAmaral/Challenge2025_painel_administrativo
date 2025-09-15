@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/models/mission.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/mission_screen/create_mission.dart';
 import 'package:painel_administrativo/widgets/mission_screen/mission_card.dart';
@@ -14,7 +15,8 @@ class ManageMissionsScreen extends StatefulWidget {
 
 class _ManageMissionsScreenState extends State<ManageMissionsScreen> {
   List<bool> checks = [false, false, false];
-  List<String> statusMissao = ['Ativas', 'Programadas', 'Encerradas'];
+  List<String> statusMissao = ['Ativa', 'Programada', 'Encerrada'];
+  late Mission missao;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,7 @@ class _ManageMissionsScreenState extends State<ManageMissionsScreen> {
                         children: [
                           StatusCheckboxList(
                             checks: checks,
-                            titulo: "Administrar Missões",
+                            titulo: "Lista de Missões",
                             status: statusMissao,
                             onChanged: (index, value) {
                               setState(() {
@@ -77,7 +79,7 @@ class _ManageMissionsScreenState extends State<ManageMissionsScreen> {
                             },
                           ),
                           SizedBox(height: 10),
-                          MissionCard(),
+                          MissionCard(checks: checks),
                         ],
                       ),
                     ),

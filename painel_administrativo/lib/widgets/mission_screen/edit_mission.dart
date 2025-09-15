@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/data/controller/mission_controller.dart';
+import 'package:painel_administrativo/data/repository/remotes/remote_mission_repository.dart';
 import 'package:painel_administrativo/models/mission.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/generic/calendar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class EditMission extends StatelessWidget {
+class EditMission extends StatefulWidget {
   final Mission missao;
   final String Function(DateTime) formatarData;
 
@@ -14,17 +17,26 @@ class EditMission extends StatelessWidget {
   });
 
   @override
+  State<EditMission> createState() => _EditMissionState();
+}
+
+class _EditMissionState extends State<EditMission> {
+  final MissionController _controllers = MissionController();
+  final missaoRepo = RemoteMissionRepository(client: Supabase.instance.client);
+  bool isLoading = true;
+
+  @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.edit),
       iconSize: 16,
       color: AppStyles.textGrey,
       onPressed: () {
-        final tituloController = TextEditingController(text: missao.titulo);
-        final pontosController = TextEditingController(text: missao.pontos.toString());
-        final linkController = TextEditingController(text: missao.link);
-        DateTime dataInicio = missao.dataInicio;
-        DateTime dataVencimento = missao.dataVencimento;
+        DateTime dataVencimento = widget.missao.dataVencimento;
+        DateTime dataInicio = Mission.calcularDataInicio(dataVencimento);
+        _controllers.tituloController.text = widget.missao.titulo;
+        _controllers.pontosController.text = widget.missao.pontos.toString();
+        _controllers.linkController.text = widget.missao.link ?? '';
 
         showDialog(
           context: context,
@@ -61,7 +73,7 @@ class EditMission extends StatelessWidget {
                         child: Column(
                           children: [
                             TextField(
-                              controller: tituloController,
+                              controller: _controllers.tituloController,
                               decoration: InputDecoration(
                                 labelText: "Título",
                                 labelStyle: AppStyles.kufam(
@@ -79,7 +91,7 @@ class EditMission extends StatelessWidget {
                             ),
                             SizedBox(height: 16),
                             TextField(
-                              controller: pontosController,
+                              controller: _controllers.pontosController,
                               decoration: InputDecoration(
                                 labelText: "Pontos",
                                 labelStyle: AppStyles.kufam(
@@ -97,7 +109,7 @@ class EditMission extends StatelessWidget {
                             ),
                             SizedBox(height: 16),
                             TextField(
-                              controller: linkController,
+                              controller: _controllers.linkController,
                               decoration: InputDecoration(
                                 labelText: "Link",
                                 labelStyle: AppStyles.kufam(
@@ -114,52 +126,15 @@ class EditMission extends StatelessWidget {
                               ),
                             ),
 
-                            // DropdownButtonFormField<String>(
-                            //   value: statusSelecionado,
-                            //   items: ["Ativa", "Programada", "Encerrada"]
-                            //       .map(
-                            //         (status) => DropdownMenuItem(
-                            //           value: status,
-                            //           child: Text(status),
-                            //         ),
-                            //       )
-                            //       .toList(),
-                            //   onChanged: (value) {
-                            //     if (value != null) {
-                            //       setState(() => statusSelecionado = value);
-                            //     }
-                            //   },
-                            //   decoration: InputDecoration(labelText: "Status"),
-                            // ),
                             SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "Início: ${formatarData(dataInicio)}",
+                                    "Início: ${widget.formatarData(dataInicio)}",
                                     style: AppStyles.kufam(
                                       16,
                                       AppStyles.textGrey,
-                                      AppStyles.bold,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    final picked =
-                                        await Calendar.selecionarData(
-                                          context: context,
-                                          dataInicial: dataInicio,
-                                        );
-                                    if (picked != null) {
-                                      setState(() => dataInicio = picked);
-                                    }
-                                  },
-                                  child: Text(
-                                    "Alterar",
-                                    style: AppStyles.kufam(
-                                      16,
-                                      AppStyles.blue,
                                       AppStyles.bold,
                                     ),
                                   ),
@@ -171,7 +146,7 @@ class EditMission extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    "Fim: ${formatarData(dataVencimento)}",
+                                    "Fim: ${widget.formatarData(dataVencimento)}",
                                     style: AppStyles.kufam(
                                       16,
                                       AppStyles.textGrey,
@@ -181,7 +156,7 @@ class EditMission extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                     final picked =
+                                    final picked =
                                         await Calendar.selecionarData(
                                           context: context,
                                           dataInicial: dataVencimento,
@@ -218,9 +193,30 @@ class EditMission extends StatelessWidget {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          // Aqui você pode salvar as alterações
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          print(
+                            "Atualizando missão ID: ${widget.missao.idMissao}",
+                          );
+                          try {
+                            await missaoRepo.updateMissao(
+                              widget.missao.idMissao,
+                              _controllers.tituloController.text,
+                              _controllers.linkController.text,
+                              int.tryParse(
+                                    _controllers.pontosController.text,
+                                  ) ??
+                                  0,
+                              dataVencimento,
+                            );
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
+                          } catch (e) {
+                            print("Erro ao atualizar missão: $e");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Erro ao atualizar: $e")),
+                            );
+                          }
                         },
                         child: Text(
                           "Concluir",
