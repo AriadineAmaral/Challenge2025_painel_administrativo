@@ -4,13 +4,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ProjectService {
   final supabase = Supabase.instance.client;
 
-  Future<List<ProjectView>> fetchProjects() async {
-    final response = await supabase
-        .from('vw_analise_projetos') 
-        .select('*')
-        .order('data_inicio', ascending: false);
+  Future<List<ProjectView>> fetchProjects({
+    String? searchTerm,
+    String? status,
+  }) async {
+    var query = supabase.from('vw_analise_projetos').select('*');
 
-    print(response); 
+    if (status != null && status.isNotEmpty) {
+      query = query.eq('status', status);
+    }
+
+    if (searchTerm != null && searchTerm.isNotEmpty) {
+      final formattedSearchTerm = '%$searchTerm%';
+      query = query.or(
+        'titulo.ilike.$formattedSearchTerm,descricao.ilike.$formattedSearchTerm,nome_colaborador.ilike.$formattedSearchTerm',
+      );
+    }
+
+    final response = await query.order('data_inicio', ascending: false);
 
     final projects = (response as List<dynamic>)
         .map((json) => ProjectView.fromJson(json as Map<String, dynamic>))
@@ -25,51 +36,4 @@ class ProjectService {
         .update({'id_status_projetos': newStatusId})
         .eq('id_projeto', projectId);
   }
-
-   Future<List<ProjectView>> fetchAnaliseProjects() async {
-    final response = await supabase
-        .from('vw_analise_projetos_analise') 
-        .select('*')
-        .order('data_inicio', ascending: false);
-
-    print(response); 
-
-    final projects = (response as List<dynamic>)
-        .map((json) => ProjectView.fromJson(json as Map<String, dynamic>))
-        .toList();
-
-    return projects;
-  }
-
-  Future<List<ProjectView>> fetchDesenvolvimentoProjects() async {
-    final response = await supabase
-        .from('vw_analise_projetos_desenvolvimento') 
-        .select('*')
-        .order('data_inicio', ascending: false);
-
-    print(response); 
-
-    final projects = (response as List<dynamic>)
-        .map((json) => ProjectView.fromJson(json as Map<String, dynamic>))
-        .toList();
-
-    return projects;
-  }
-
-  Future<List<ProjectView>> fetchFinalizadoProjects() async {
-    final response = await supabase
-        .from('vw_analise_projetos_finalizado')  
-        .select('*')
-        .order('data_inicio', ascending: false);
-
-    print(response); 
-
-    final projects = (response as List<dynamic>)
-        .map((json) => ProjectView.fromJson(json as Map<String, dynamic>))
-        .toList();
-
-    return projects;
-  }
-
-
 }

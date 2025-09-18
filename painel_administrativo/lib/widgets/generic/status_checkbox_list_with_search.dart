@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
-import 'package:painel_administrativo/widgets/generic/button.dart';
 
-class StatusCheckboxList extends StatelessWidget {
+class StatusCheckboxListWithSearch extends StatelessWidget {
   final List<bool> checks;
   final List<String> status;
   final void Function(int index, bool value) onChanged;
   final String titulo;
+  final TextEditingController searchController;
+  final void Function(String value) onSearchChanged;
 
-  const StatusCheckboxList({
+  const StatusCheckboxListWithSearch({
     super.key,
     required this.checks,
     required this.status,
     required this.onChanged,
     required this.titulo,
+    required this.searchController,
+    required this.onSearchChanged,
   });
 
   @override
@@ -24,11 +27,11 @@ class StatusCheckboxList extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: Text(titulo,
+          child: Text(
+            titulo,
             style: AppStyles.kufam(25, AppStyles.black, AppStyles.semiBold),
           ),
         ),
-
         ...List.generate(status.length, (index) {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,6 +56,30 @@ class StatusCheckboxList extends StatelessWidget {
             ],
           );
         }),
+        SizedBox(
+          width: 200,
+          height: 35,
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: 'Pesquisar...',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppStyles.blue),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(
+                  color: AppStyles.blue,
+                  width: 2,
+                ), // Defina a cor e a espessura
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            ),
+            style: AppStyles.kufam(14, AppStyles.black, AppStyles.regular),
+            onChanged: onSearchChanged,
+          ),
+        ),
       ],
     );
   }

@@ -146,7 +146,7 @@ class HorizontalMissionsChart extends StatelessWidget {
             ),
           ),
           gridData: FlGridData(
-            show: true,
+            show: false,
             drawHorizontalLine: true,
             horizontalInterval: maxValue / 3,
             getDrawingHorizontalLine: (value) =>
