@@ -17,7 +17,7 @@ class ProjectService {
     if (searchTerm != null && searchTerm.isNotEmpty) {
       final formattedSearchTerm = '%$searchTerm%';
       query = query.or(
-        'titulo.ilike.$formattedSearchTerm,descricao.ilike.$formattedSearchTerm,nome_colaborador.ilike.$formattedSearchTerm',
+        'titulo.ilike.$formattedSearchTerm,nome_projeto.ilike.$formattedSearchTerm,nome_colaborador.ilike.$formattedSearchTerm',
       );
     }
 
@@ -35,5 +35,25 @@ class ProjectService {
         .from('projetos')
         .update({'id_status_projetos': newStatusId})
         .eq('id_projeto', projectId);
+  }
+
+   Future<List<String>> buscarArquivosDoProjeto(int idProjeto) async {
+    try {
+      print('DEBUG: Buscando arquivos para o projeto com ID: $idProjeto');
+      final response = await supabase
+          .from('arquivos')
+          .select('caminho')
+          .eq('id_projeto', idProjeto);
+
+      final arquivos = response
+          .map((item) => item['caminho'] as String)
+          .toList();
+
+      print('DEBUG: Arquivos encontrados: $arquivos');
+      return arquivos;
+    } catch (e) {
+      print('DEBUG: Erro ao buscar arquivos: $e');
+      throw Exception('Erro ao buscar arquivos: $e');
+    }
   }
 }

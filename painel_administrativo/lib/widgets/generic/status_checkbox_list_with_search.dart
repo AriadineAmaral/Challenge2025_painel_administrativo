@@ -57,7 +57,7 @@ class StatusCheckboxListWithSearch extends StatelessWidget {
           );
         }),
         SizedBox(
-          width: 200,
+          width: 150,
           height: 35,
           child: TextField(
             controller: searchController,

@@ -1,15 +1,15 @@
 class ProjectView {
   final int idProjeto;
-  final String titulo;           
+  final String titulo;
   final String descricao;
-  final String nomeProjetoTipo; 
+  final String nomeProjetoTipo;
   final String nomeArquivo;
-  final String caminhoArquivo;
   final String status;
   final DateTime dataInicio;
   final String nomeColaborador;
   final String? fotoUrl;
   final int idStatusProjeto;
+  final String? caminhoArquivo;
 
   ProjectView({
     required this.idProjeto,
@@ -17,7 +17,7 @@ class ProjectView {
     required this.descricao,
     required this.nomeProjetoTipo,
     required this.nomeArquivo,
-    required this.caminhoArquivo,
+    this.caminhoArquivo, 
     required this.status,
     required this.dataInicio,
     required this.nomeColaborador,
@@ -40,4 +40,6 @@ class ProjectView {
       idStatusProjeto: json['id_status_projetos'] as int,
     );
   }
+
+  
 }

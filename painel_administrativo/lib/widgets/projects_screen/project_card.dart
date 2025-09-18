@@ -3,6 +3,7 @@ import 'package:painel_administrativo/models/project.dart';
 import 'package:painel_administrativo/data/service/project_service.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectCard extends StatefulWidget {
   final List<ProjectView> projects;
@@ -29,17 +30,18 @@ class _ProjectCardState extends State<ProjectCard> {
 
   void _showEditDialog(BuildContext context, ProjectView project) {
     final nameController = TextEditingController(text: project.titulo);
-    final dateController = TextEditingController(
-        text: DateFormat('dd/MM/yyyy').format(project.dataInicio));
-    final collaboratorController =
-        TextEditingController(text: project.nomeColaborador ?? 'N/A');
+    final dateController =
+        TextEditingController(text: DateFormat('dd/MM/yyyy').format(project.dataInicio));
+    final descricaoController =
+        TextEditingController(text: project.descricao);
+    final colaboradorController =
+        TextEditingController(text: project.nomeColaborador);
 
     final formKey = GlobalKey<FormState>();
 
-   
     String selectedStatus = project.status;
     if (!statusMap.containsKey(selectedStatus)) {
-      selectedStatus = 'Análise'; 
+      selectedStatus = 'Análise';
     }
 
     showDialog(
@@ -59,7 +61,8 @@ class _ProjectCardState extends State<ProjectCard> {
                   const SizedBox(width: 8),
                   Text(
                     'Editar Projeto',
-                    style: AppStyles.kufam(20, AppStyles.blue, AppStyles.semiBold),
+                    style: AppStyles.kufam(
+                        20, AppStyles.blue, AppStyles.semiBold),
                   ),
                 ],
               ),
@@ -78,6 +81,24 @@ class _ProjectCardState extends State<ProjectCard> {
                             labelText: 'Nome do Projeto',
                           ),
                           style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: descricaoController,
+                          enabled: false,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Descrição',
+                          ),
+                          style: AppStyles.kufam(14, AppStyles.black, AppStyles.medium),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: colaboradorController,
+                          enabled: false,
+                          decoration: AppStyles.customInputDecoration(
+                            labelText: 'Colaborador',
+                          ),
+                          style: AppStyles.kufam(14, AppStyles.blue, AppStyles.medium),
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
@@ -113,69 +134,70 @@ class _ProjectCardState extends State<ProjectCard> {
                           ),
                           style: AppStyles.kufam(14, Colors.black, AppStyles.regular),
                         ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: collaboratorController,
-                          enabled: false,
-                          decoration: AppStyles.customInputDecoration(
-                            labelText: 'Colaborador',
+                        
+                        // CÓDIGO DO BOTÃO "ABRIR ARQUIVO"
+                        if (project.caminhoArquivo != null &&
+                            project.caminhoArquivo!.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Text(
+                                "Arquivos:",
+                                style: AppStyles.kufam(14, AppStyles.black, AppStyles.medium),
+                              ),
+                              const SizedBox(width: 8),
+                              InkWell(
+                                onTap: () => _abrirArquivo(project.caminhoArquivo!),
+                                child: Text(
+                                  project.nomeArquivo, // Se sua view tiver o nome do arquivo
+                                  style: AppStyles.kufam(14, AppStyles.blue, AppStyles.medium),
+                                ),
+                              ),
+                              const Icon(Icons.file_present, size: 20, color: AppStyles.blue),
+                            ],
                           ),
-                          style: AppStyles.kufam(14, AppStyles.blue, AppStyles.medium),
-                        ),
+                        ],
                       ],
                     ),
                   ),
                 ),
               ),
               actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Cancelar',
+                    style: AppStyles.kufam(14, AppStyles.black, AppStyles.medium),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final newStatusId = statusMap[selectedStatus];
+                      if (newStatusId != null) {
+                        await _projectService.updateProjectStatus(
+                            project.idProjeto, newStatusId);
                         Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Cancelar',
-                        style: AppStyles.kufam(
-                          14,
-                          AppStyles.black,
-                          AppStyles.medium,
-                        ),
-                      ),
+                        widget.onStatusUpdated();
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppStyles.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          final newStatusId = statusMap[selectedStatus];
-                          if (newStatusId != null) {
-                            await _projectService.updateProjectStatus(
-                                project.idProjeto, newStatusId);
-                            Navigator.of(context).pop();
-                            widget.onStatusUpdated();
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppStyles.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                      child: Text(
-                        'Salvar',
-                        style: AppStyles.kufam(
-                          14,
-                          AppStyles.white,
-                          AppStyles.medium,
-                        ),
-                      ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                  ],
+                  ),
+                  child: Text(
+                    'Salvar',
+                    style: AppStyles.kufam(14, AppStyles.white, AppStyles.medium),
+                  ),
                 ),
               ],
             );
@@ -183,6 +205,13 @@ class _ProjectCardState extends State<ProjectCard> {
         );
       },
     );
+  }
+
+  Future<void> _abrirArquivo(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception("Não foi possível abrir o arquivo: $url");
+    }
   }
 
   @override
@@ -231,6 +260,7 @@ class _ProjectCardState extends State<ProjectCard> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CircleAvatar(
                           backgroundColor: circleColor,
@@ -238,9 +268,8 @@ class _ProjectCardState extends State<ProjectCard> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          flex: 2,
+                          flex: 3,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
@@ -259,17 +288,16 @@ class _ProjectCardState extends State<ProjectCard> {
                                   AppStyles.regular,
                                 ),
                               ),
-                              if (project.descricao.isNotEmpty)
+                              if (project.nomeProjetoTipo.isNotEmpty)
                                 Text(
-                                  project.descricao,
+                                  "Tipo: ${project.nomeProjetoTipo}",
                                   style: AppStyles.kufam(
                                     12,
                                     Colors.grey[700]!,
                                     AppStyles.regular,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
+                              
                             ],
                           ),
                         ),
