@@ -260,7 +260,8 @@ class _ProjectCardState extends State<ProjectCard> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
                           backgroundColor: circleColor,

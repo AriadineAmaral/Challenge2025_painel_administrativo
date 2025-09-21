@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/data/controller/mission_controller.dart';
+import 'package:painel_administrativo/data/repository/remotes/remote_mission_repository.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/generic/button.dart';
 import 'package:painel_administrativo/widgets/generic/custom_date_field.dart';
 import 'package:painel_administrativo/widgets/generic/custom_text_field%20.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CreateMission extends StatefulWidget {
   const CreateMission({super.key});
@@ -12,9 +15,9 @@ class CreateMission extends StatefulWidget {
 }
 
 class _CreateMissionState extends State<CreateMission> {
-  final TextEditingController tituloController = TextEditingController();
-  final TextEditingController linkController = TextEditingController();
-  final TextEditingController pontosController = TextEditingController();
+  final MissionController _controllers = MissionController();
+  final missaoRepo = RemoteMissionRepository(client: Supabase.instance.client);
+  bool isLoading = true;
 
   DateTime? dataSelecionada;
 
@@ -51,7 +54,7 @@ class _CreateMissionState extends State<CreateMission> {
             ),
             CustomTextField(
               label: "Digite o título da missão",
-              controller: tituloController,
+              controller: _controllers.tituloController,
               obscureText: false,
             ),
             SizedBox(height: 16),
@@ -68,7 +71,7 @@ class _CreateMissionState extends State<CreateMission> {
             ),
             CustomTextField(
               label: "Link para direcionar o usuário",
-              controller: linkController,
+              controller: _controllers.linkController,
               obscureText: false,
             ),
 
@@ -93,7 +96,7 @@ class _CreateMissionState extends State<CreateMission> {
                       width: 72,
                       child: CustomTextField(
                         label: "",
-                        controller: pontosController,
+                        controller: _controllers.pontosController,
                         obscureText: false,
                       ),
                     ),
@@ -139,11 +142,43 @@ class _CreateMissionState extends State<CreateMission> {
                 AppStyles.black,
                 AppStyles.semiBold,
               ).copyWith(height: 0.5),
-              onPressed: () {
-                // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => HomeScreen()),
-                // );
+              onPressed: () async {
+                try {
+                  await missaoRepo.insertMissao(
+                    _controllers.tituloController.text,
+                    _controllers.linkController.text,
+                    int.tryParse(_controllers.pontosController.text) ?? 0,
+                    dataSelecionada!,
+                  );
+
+                  _controllers.tituloController.clear();
+                  _controllers.linkController.clear();
+                  _controllers.pontosController.clear();
+                  _controllers.dataVencimentoController.clear(); // opcional
+
+                  setState(() {
+                    dataSelecionada = null;
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: AppStyles.green,
+                      content: Text(
+                        "Missão cadastrada com sucesso!",
+
+                        style: TextStyle(
+                          color: Colors.white, // cor do texto
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  print("Erro ao atualizar missão: $e");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Erro ao atualizar: $e")),
+                  );
+                }
               },
             ),
           ],

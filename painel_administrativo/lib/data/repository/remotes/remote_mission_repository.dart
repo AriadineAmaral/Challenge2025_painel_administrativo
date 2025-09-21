@@ -29,14 +29,6 @@ class RemoteMissionRepository implements MissionRepository {
     DateTime dtVencimento,
   ) async {
     try {
-      // print({
-      //   'titulo': titulo,
-      //   'link': link,
-      //   'pontos': pontos,
-      //   'data_vencimento': dtVencimento.toIso8601String(),
-      // });
-
-      //final response =
       await client
           .from('missoes')
           .update({
@@ -46,9 +38,25 @@ class RemoteMissionRepository implements MissionRepository {
             'data_vencimento': dtVencimento.toIso8601String().split('T')[0],
           })
           .eq('id_missao', idMissao);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
-      //print(dtVencimento.toIso8601String().split('T')[0]);
-      //print("update $response");
+  @override
+  Future<void> insertMissao(
+    String titulo,
+    String? link,
+    int pontos,
+    DateTime dtVencimento,
+  ) async {
+    try {
+      await client.from('missoes').insert({
+        'titulo': titulo,
+        'link': (link?.isEmpty ?? true) ? null : link,
+        'pontos': pontos,
+        'data_vencimento': dtVencimento.toIso8601String().split('T')[0],
+      });
     } catch (e) {
       throw Exception(e);
     }

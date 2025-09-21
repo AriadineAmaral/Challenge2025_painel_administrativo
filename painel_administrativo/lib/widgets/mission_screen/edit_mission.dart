@@ -194,9 +194,7 @@ class _EditMissionState extends State<EditMission> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          print(
-                            "Atualizando missão ID: ${widget.missao.idMissao}",
-                          );
+                          
                           try {
                             await missaoRepo.updateMissao(
                               widget.missao.idMissao,

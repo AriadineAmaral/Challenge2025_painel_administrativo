@@ -9,7 +9,10 @@ class AppStyles {
   static const Color grey = Color(0xFFECECEC);
   static const Color grey2 = Color(0xFFD9D9D9);
   static const Color textGrey = Color(0xFF665B5B);
+  static const Color green = Color(0xFF00923E);
+  static const Color red = Color.fromARGB(255, 146, 0, 0);
   static const Color textPurple = Color.fromARGB(255, 75, 69, 126);
+
   static const FontWeight regular = FontWeight.w400;
   static const FontWeight medium = FontWeight.w500;
   static const FontWeight semiBold = FontWeight.w600;

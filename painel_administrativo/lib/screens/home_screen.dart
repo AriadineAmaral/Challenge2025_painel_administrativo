@@ -14,6 +14,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    await Future.delayed(
+      const Duration(seconds: 2),
+    ); // simulação de carregamento
+    if (mounted) setState(() => isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     double larguraTela = MediaQuery.of(context).size.width;
@@ -21,72 +36,101 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: const Header(),
       backgroundColor: AppStyles.white,
-      body: Center( 
+      body: Center(
         child: SizedBox(
           width: larguraTela * 0.8,
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppStyles.blue),
+                )
+              : Row(
                   children: [
-                    Text(
-                      "Painel\nAdministrativo",
-                      style: AppStyles.kronaOne(
-                        40,
-                        AppStyles.blue,
-                        AppStyles.regular,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Painel\nAdministrativo",
+                            style: AppStyles.kronaOne(
+                              40,
+                              AppStyles.blue,
+                              AppStyles.regular,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Button(
+                            text: "Administrar Missões",
+                            backgroundColor: AppStyles.blue,
+                            textStyle: AppStyles.kufam(
+                              24,
+                              AppStyles.white,
+                              AppStyles.semiBold,
+                            ),
+                            width: larguraTela * 0.3,
+                            height: 100,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ManageMissionsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          Button(
+                            text: "Analisar projetos",
+                            backgroundColor: AppStyles.blue,
+                            textStyle: AppStyles.kufam(
+                              24,
+                              AppStyles.white,
+                              AppStyles.semiBold,
+                            ),
+                            width: larguraTela * 0.3,
+                            height: 100,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AnalyzeProjects(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          Button(
+                            text: "Dashboard de Engajamento",
+                            backgroundColor: AppStyles.blue,
+                            textStyle: AppStyles.kufam(
+                              24,
+                              AppStyles.white,
+                              AppStyles.semiBold,
+                            ),
+                            width: larguraTela * 0.3,
+                            height: 100,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DashboardPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Button(text: "Administrar Missões", backgroundColor: AppStyles.blue, textStyle: AppStyles.kufam(24, AppStyles.white, AppStyles.semiBold),
-                    width: larguraTela * 0.3,
-                    height: 100,
-                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ManageMissionsScreen()),
-                        );
-                     }
-                    ),
-                    SizedBox(height: 24),
-
-                    Button(text: "Analisar projetos", backgroundColor:  AppStyles.blue, textStyle: AppStyles.kufam(24, AppStyles.white, AppStyles.semiBold),
-                    width: larguraTela * 0.3,
-                    height: 100,
-                    onPressed: () {
-                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AnalyzeProjects()),
-                        );
-                    }),
-
-                     SizedBox(height: 24),
-
-                    Button(text: "Dashboard de Engajamento", backgroundColor:  AppStyles.blue, textStyle: AppStyles.kufam(24, AppStyles.white, AppStyles.semiBold),
-                    width: larguraTela * 0.3,
-                    height: 100,
-                    onPressed: () {
-                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DashboardPage()),
-                        );
-                    }),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
   }
 }
-

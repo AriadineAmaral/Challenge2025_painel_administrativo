@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/screens/login_screen.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
@@ -6,7 +7,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final bool back = ModalRoute.of(context)?.canPop ?? false;
 
     return AppBar(
@@ -24,7 +24,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           ),
           TextButton(
             onPressed: () {
-              // ação de logout
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false, // Remove todas as rotas anteriores
+              );
             },
             child: Text(
               "Sair",

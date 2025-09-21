@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:painel_administrativo/data/repository/remotes/remote_administrator_repository.dart';
 import 'package:painel_administrativo/screens/home_screen.dart';
 import 'package:painel_administrativo/styles/app_styles.dart';
 import 'package:painel_administrativo/widgets/generic/button.dart';
 import 'package:painel_administrativo/widgets/generic/custom_text_field%20.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final administradorRepo = RemoteAdministratorRepository(client: Supabase.instance.client);
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
@@ -57,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     CustomTextField(
                       label: "Digite o usuário",
-                      controller: senhaController,
+                      controller: usuarioController,
                       obscureText: false,
                     ),
                     SizedBox(height: 16),
@@ -74,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     CustomTextField(
                       label: "Digite a senha",
-                      controller: usuarioController,
+                      controller: senhaController,
                       obscureText: true,
                     ),
                     SizedBox(height: 16),
@@ -87,11 +90,43 @@ class _LoginScreenState extends State<LoginScreen> {
                         AppStyles.white,
                         AppStyles.semiBold,
                       ),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
+                      onPressed: () async {
+                        final login = usuarioController.text.trim();
+                        final senha = senhaController.text;
+
+                        if (login.isEmpty || senha.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                "Preencha todos os campos",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final sucesso = await administradorRepo.loginAdministrador(login, senha);
+
+                        if (sucesso) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                "Usuário ou senha inválidos",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ],
