@@ -13,15 +13,13 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppStyles.blue,
       iconTheme: const IconThemeData(color: Colors.white),
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Padding(
-            padding: EdgeInsetsGeometry.only(left: back ? 10 : 40),
-            child: Text(
-              "EuroPro",
-              style: AppStyles.kronaOne(30, AppStyles.white, AppStyles.regular),
-            ),
+          Text(
+            "EuroPro",
+            style: AppStyles.kronaOne(30, AppStyles.white, AppStyles.regular),
           ),
+          SizedBox(width: 500),
           TextButton(
             onPressed: () {
               Navigator.pushAndRemoveUntil(

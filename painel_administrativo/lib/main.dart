@@ -26,7 +26,7 @@ class PainelAdministrativo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: DashboardPage(),
       debugShowCheckedModeBanner: false,
     );
   }
