@@ -13,7 +13,7 @@ class DataService {
       if (response.isEmpty) return [];
       return (response as List).map((e) => e['nome'] as String).toList();
     } catch (e) {
-      print('Erro ao buscar colaboradores: $e');
+      //print('Erro ao buscar colaboradores: $e');
       return [];
     }
   }
@@ -27,14 +27,13 @@ class DataService {
           .select('mes, total_pontos, porcentagem_total')
           .eq('nome', colaboradorNome);
 
-      print('Resposta engajamento: $response');
+      //print('Resposta engajamento: $response');
 
-      if (response == null) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e) {
-      print('Erro ao buscar engajamento do colaborador: $e');
+     // print('Erro ao buscar engajamento do colaborador: $e');
       return [];
     }
   }
@@ -49,14 +48,14 @@ class DataService {
           .eq('nome', colaboradorNome)
           .order('mes_num', ascending: true);
 
-      print('Resposta projetos: $response');
+     // print('Resposta projetos: $response');
 
       if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e) {
-      print('Erro ao buscar projetos do colaborador: $e');
+     // print('Erro ao buscar projetos do colaborador: $e');
       return [];
     }
   }
@@ -67,14 +66,14 @@ class DataService {
           .from('vw_engajamento_geral')
           .select('engajamento, percentual_total, mes');
 
-      print('Resposta engajamento geral: $response');
+    //  print('Resposta engajamento geral: $response');
 
       if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e) {
-      print('Erro ao buscar engajamento geral: $e');
+      //print('Erro ao buscar engajamento geral: $e');
       return [];
     }
   }
@@ -92,7 +91,7 @@ class DataService {
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e) {
-      print('Erro ao buscar missões mês: $e');
+      //print('Erro ao buscar missões mês: $e');
       return [];
     }
   }
@@ -104,12 +103,12 @@ class DataService {
           .select('dia_semana, qtd_missoes')
           .eq('nome', colaboradorNome);
 
-      if (response == null) return [];
+      if (response.isEmpty) return [];
       return (response as List)
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e) {
-      print('Erro ao buscar missões semana: $e');
+      //print('Erro ao buscar missões semana: $e');
       return [];
     }
   }

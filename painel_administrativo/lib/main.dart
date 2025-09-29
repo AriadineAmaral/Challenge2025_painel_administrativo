@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:painel_administrativo/screens/analyze_projects_screen.dart';
-import 'package:painel_administrativo/screens/dashboard_screen.dart';
-import 'package:painel_administrativo/screens/home_screen.dart';
 import 'package:painel_administrativo/screens/login_screen.dart';
-import 'package:painel_administrativo/screens/manage_missions_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 void main() async {
   runApp(const PainelAdministrativo());
@@ -12,9 +10,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://ikxlfarvmokiwjfqqial.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlreGxmYXJ2bW9raXdqZnFxaWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkxNzAxOTUsImV4cCI6MjA2NDc0NjE5NX0.0b4EJzlHDDTD3m9pjYAVcjLNoOqjWWQJVw2WWBUb8dg',
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   runApp(const PainelAdministrativo());
@@ -26,7 +23,7 @@ class PainelAdministrativo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DashboardPage(),
+      home: LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

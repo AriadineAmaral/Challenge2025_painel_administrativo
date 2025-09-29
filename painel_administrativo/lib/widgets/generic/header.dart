@@ -7,7 +7,6 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool back = ModalRoute.of(context)?.canPop ?? false;
 
     return AppBar(
       backgroundColor: AppStyles.blue,
